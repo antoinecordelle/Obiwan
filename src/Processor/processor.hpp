@@ -2,13 +2,15 @@
 #define PROCESSOR_HPP
 
 #include <string>
+#include "../Parser/parser.hpp"
 
 class Processor {
 public:
-    Processor();
+    Processor(const std::string filePath, int threshold);
 
 private:
-
+    Parser          mParser;
+    int             mThreshold;
 };
 
 #endif //PROCESSOR_HPP

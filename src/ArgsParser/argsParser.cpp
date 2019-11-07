@@ -10,12 +10,12 @@ bool ArgsParser::parseArgs(Arguments &args, int argc, char **argv) {
             cout << "Help" << endl;
             return false;
         }
-        if (string(argv[i]) == "-f" || string(argv[i]) == "--file") {
+        if (string(argv[i]) == "-f" || string(argv[i]) == "--filePath") {
             if (i + 1 < argc) {
-                args.file = argv[++i]; // Increment 'i' so we don't get the argument as the next argv[i].
+                args.filePath = argv[++i]; // Increment 'i' so we don't get the argument as the next argv[i].
             }
             else {
-                std::cerr << "-f / --file option requires one argument." << std::endl;
+                std::cerr << "-f / --filePath option requires one argument." << std::endl;
             }
         } else if (string(argv[i]) == "-t" || string(argv[i]) == "--threshold") {
             if (i + 1 < argc) {
@@ -23,7 +23,7 @@ bool ArgsParser::parseArgs(Arguments &args, int argc, char **argv) {
             }
         }
     }
-    if (args.file.empty()) {
+    if (args.filePath.empty()) {
         throw invalid_argument("Please provide a file name using the -f option");
     }
     return true;

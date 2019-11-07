@@ -6,8 +6,8 @@
 using namespace std;
 
 Application::Application(const Arguments& arguments)
-:mFile(arguments.file)
-,mThreshold(arguments.threshold)
+: mFilePath(arguments.filePath)
+, mProcessor(arguments.filePath, arguments.threshold)
 {
 
 }

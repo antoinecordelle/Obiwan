@@ -4,7 +4,7 @@
 #include <string>
 
 struct Arguments {
-    std::string     file = "";
+    std::string     filePath = "";
     int             threshold = 10;
 };
 

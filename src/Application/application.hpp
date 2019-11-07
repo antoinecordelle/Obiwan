@@ -2,6 +2,7 @@
 #define APPLICATION_HPP
 
 #include "../ArgsParser/argsParser.hpp"
+#include "../Processor/processor.hpp"
 
 #include <string>
 
@@ -14,8 +15,8 @@ public:
 
 
 private:
-    std::string     mFile;
-    int             mThreshold;
+    std::string     mFilePath;
+    Processor       mProcessor;
 };
 
 #endif // APPLICATION_HPP
