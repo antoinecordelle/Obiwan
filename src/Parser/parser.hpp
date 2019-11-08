@@ -2,6 +2,7 @@
 #define PARSER_HPP
 
 #include <string>
+#include <fstream>
 
 struct HttpPacket {
     std::string     remoteHost;
@@ -15,14 +16,15 @@ struct HttpPacket {
 
 class Parser {
 public:
-    Parser(const std::string& filePath);
+    explicit Parser(const std::string& filePath);
+    ~Parser();
 
 public:
     void            parseCsv();
-    void            parseLine(std::string line);
+    HttpPacket      parseLine();
 
 private:
-    std::string     mFilePath;
+    std::ifstream   mFile;
 };
 
 

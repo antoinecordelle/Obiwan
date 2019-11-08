@@ -6,7 +6,7 @@
 
 class Processor {
 public:
-    Processor(const std::string filePath, int threshold);
+    Processor(const std::string& filePath, int threshold);
 
 private:
     Parser          mParser;
