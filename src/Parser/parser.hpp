@@ -3,6 +3,8 @@
 
 #include <string>
 #include <fstream>
+#include <tuple>
+#include <list>
 
 struct HttpPacket {
     std::string     remoteHost;
@@ -20,8 +22,8 @@ public:
     ~Parser();
 
 public:
-    void            parseCsv();
-    HttpPacket      parseLine();
+    std::tuple<std::list<HttpPacket>, bool>     parseLines(int numberOfLines);
+    std::tuple<HttpPacket, bool>                parseOneLine();
 
 private:
     std::ifstream   mFile;

@@ -8,9 +8,9 @@
 class LogErrorException : public std::exception
 {
 public:
-    const char* what() const throw()
+    [[nodiscard]] const char* what() const noexcept override
     {
-        return ("Invalid parsing of log line").c_str();
+        return "Invalid parsing of log line";
     }
 };
 

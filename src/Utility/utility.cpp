@@ -3,6 +3,7 @@
 
 using namespace std;
 
-void Utility::removeChar(string& str, char charToRemove) {
+string Utility::removeChar(string& str, char charToRemove) {
     str.erase(remove(str.begin(), str.end(), charToRemove), str.end() );
+    return str;
 }

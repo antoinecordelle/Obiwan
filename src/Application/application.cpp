@@ -14,7 +14,7 @@ Application::Application(const Arguments& arguments)
 
 void Application::run()
 {
-
+    mProcessor.run();
 }
 
 
