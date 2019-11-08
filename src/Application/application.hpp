@@ -2,7 +2,7 @@
 #define APPLICATION_HPP
 
 #include "../ArgsParser/argsParser.hpp"
-#include "../Processor/processor.hpp"
+#include "../StatProcessor/statProcessor.hpp"
 
 #include <string>
 
@@ -15,8 +15,9 @@ public:
 
 
 private:
-    std::string     mFilePath;
-    Processor       mProcessor;
+    std::string         mFilePath;
+    LogFile             mLogFile;
+    StatProcessor       mStatProcessor;
 };
 
 #endif // APPLICATION_HPP

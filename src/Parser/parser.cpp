@@ -8,7 +8,7 @@
 using namespace std;
 
 Parser::Parser(const std::string& filePath)
-: mFile(filePath)
+:mFile(filePath)
 {
     if (mFile.is_open())
     {

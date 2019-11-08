@@ -7,14 +7,12 @@ using namespace std;
 
 Application::Application(const Arguments& arguments)
 : mFilePath(arguments.filePath)
-, mProcessor(arguments.filePath, arguments.threshold)
+, mLogFile(arguments.filePath)
+, mStatProcessor(&mLogFile)
 {
-
 }
 
 void Application::run()
 {
-    mProcessor.run();
+    mStatProcessor.run();
 }
-
-
