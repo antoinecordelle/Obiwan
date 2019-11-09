@@ -3,24 +3,24 @@
 
 #include <string>
 #include <list>
+#include <vector>
 #include "../Parser/parser.hpp"
 #include "../LogFile/logFile.hpp"
+#include "../Metrics/metrics.hpp"
 
 class StatProcessor {
 public:
     using ListIterator = std::list<HttpPacket>::iterator;
 
 public:
-    explicit StatProcessor(LogFile* logFile);
+    StatProcessor() = default;
 
-    void                    run();
-
+    bool processLine(const HttpPacket& httpPacket);
+    std::vector<Metric> getMetrics(const HttpPacket& lastPacket);
 
 private:
-    LogFile*                mLogFilePtr;
-    time_t                  mCurrentTime;
-    ListIterator            mCurrentPosition;
-
+    Metric     mCurrentMetric{};
+    Metric     mBufferedMetric{};
 };
 
 #endif //PROCESSOR_HPP

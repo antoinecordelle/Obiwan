@@ -3,8 +3,10 @@
 
 #include "../ArgsParser/argsParser.hpp"
 #include "../StatProcessor/statProcessor.hpp"
+#include "../Metrics/metrics.hpp"
 
 #include <string>
+#include <vector>
 
 class Application
 {
@@ -13,11 +15,16 @@ public:
 
     void            run();
 
+private:
+    void processLine(HttpPacket &packet);
+    void generateAlerts(HttpPacket& packet);
 
 private:
-    std::string         mFilePath;
-    LogFile             mLogFile;
-    StatProcessor       mStatProcessor;
+    std::string             mFilePath;
+    Parser                  mParser;
+    StatProcessor           mStatProcessor;
+    std::vector<Metric>    mMetrics;
+
 };
 
 #endif // APPLICATION_HPP

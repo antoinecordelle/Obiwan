@@ -1,4 +1,5 @@
 #include "logFile.hpp"
+#include <iostream>
 
 using namespace std;
 
@@ -24,4 +25,3 @@ void LogFile::fetchLines(int numberOfLines) {
     mPacketList.splice(mPacketList.end(), lines);
     isOver = over;
 }
-

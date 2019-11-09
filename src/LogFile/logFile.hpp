@@ -9,21 +9,19 @@ public:
     using ListIterator = std::list<HttpPacket>::iterator;
 
 public:
-    explicit LogFile(const std::string& filePath);
+    explicit                LogFile(const std::string& filePath);
 
     ListIterator            getBeginIte();
+    void                    fetchLines(int numberOfLines);
 
 private:
-    void                    fetchLines(int numberOfLines);
     void                    initialize();
-
 
 private:
     Parser                  mParser;
     int                     mLineRange;
     std::list<HttpPacket>   mPacketList;
     bool                    isOver;
-
 };
 
 
