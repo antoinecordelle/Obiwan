@@ -13,22 +13,45 @@ Application::Application(const Arguments& arguments)
 
 void Application::run()
 {
-    tuple<HttpPacket, bool> packet = mParser.parseOneLine();
-    while (!std::get<1>(packet))
+    tuple<HttpPacket, bool> InitPacket = mParser.parseOneLine();
+    mStatProcessor.initialize(get<0>(InitPacket));
+    processLogFile(InitPacket);
+
+    int counter(0);
+    cout << mMetrics.size() << endl;
+    for(Metric m : mMetrics)
     {
-        processLine(std::get<0>(packet));
-        generateAlerts(std::get<0>(packet));
+        counter+= m.getCounter();
+        cout << m.getStartTime() << "   " << m.getCounter() << endl;
+    }
+    cout << counter << endl;
+}
+
+void Application::processLogFile(tuple<HttpPacket, bool> packet) {
+    while (!get<1>(packet))
+    {
+        processLine(get<0>(packet));
+        generateAlerts(get<0>(packet));
         // Transmit to front
 
         packet = mParser.parseOneLine();
     }
+    processLastMetric();
 }
 
-void Application::processLine(HttpPacket& packet) {
-    vector<Metric> newMetrics = mStatProcessor.processLine(packet);
-    mMetrics.insert(mMetrics.end(), newMetrics.begin(), newMetrics.end());
+
+void Application::processLine(const HttpPacket& packet) {
+    if(mStatProcessor.processLine(packet))
+    {
+        vector<Metric> newMetrics = mStatProcessor.getMetrics();
+        mMetrics.insert(mMetrics.end(), newMetrics.begin(), newMetrics.end());
+    }
 }
 
-void Application::generateAlerts(HttpPacket& packet) {
+void Application::generateAlerts(const HttpPacket& packet) {
 
+}
+
+void Application::processLastMetric() {
+    mMetrics.push_back(mStatProcessor.getLastMetric());
 }

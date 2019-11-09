@@ -5,7 +5,6 @@
 #include <list>
 #include <vector>
 #include "../Parser/parser.hpp"
-#include "../LogFile/logFile.hpp"
 #include "../Metrics/metrics.hpp"
 
 class StatProcessor {
@@ -15,8 +14,10 @@ public:
 public:
     StatProcessor() = default;
 
-    bool processLine(const HttpPacket& httpPacket);
-    std::vector<Metric> getMetrics(const HttpPacket& lastPacket);
+    void initialize(const HttpPacket &httpPacket);
+    bool processLine(const HttpPacket &httpPacket);
+    std::vector<Metric> getMetrics();
+    Metric getLastMetric();
 
 private:
     Metric     mCurrentMetric{};

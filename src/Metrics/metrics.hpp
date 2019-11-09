@@ -12,6 +12,7 @@ public:
     void        updateMetric(const HttpPacket& packet);
     void        computeMetric();
     time_t      getStartTime();
+    int         getCounter() const;
 
 private:
     int         mCounter;

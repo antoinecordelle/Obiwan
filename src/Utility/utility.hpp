@@ -5,7 +5,6 @@
 
 class Utility {
 public:
-    Utility();
     static std::string removeChar(std::string& str, char charToRemove);
 };
 

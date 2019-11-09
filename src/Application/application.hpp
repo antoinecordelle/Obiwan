@@ -16,8 +16,10 @@ public:
     void            run();
 
 private:
-    void processLine(HttpPacket &packet);
-    void generateAlerts(HttpPacket& packet);
+    void processLogFile(std::tuple<HttpPacket, bool> initPacket);
+    void processLine(const HttpPacket &packet);
+    void generateAlerts(const HttpPacket& packet);
+    void processLastMetric();
 
 private:
     std::string             mFilePath;
