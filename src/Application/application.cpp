@@ -8,6 +8,7 @@ using namespace std;
 Application::Application(const Arguments& arguments)
 : mFilePath(arguments.filePath)
 , mParser(arguments.filePath)
+, mStatProcessor(10)
 {
 }
 

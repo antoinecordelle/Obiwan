@@ -12,7 +12,7 @@ public:
     using ListIterator = std::list<HttpPacket>::iterator;
 
 public:
-    StatProcessor() = default;
+    explicit StatProcessor(int timeWindow);
 
     void initialize(const HttpPacket &httpPacket);
     bool processLine(const HttpPacket &httpPacket);
@@ -22,6 +22,7 @@ public:
 private:
     Metric     mCurrentMetric{};
     Metric     mBufferedMetric{};
+    int        mTimeWindow;
 };
 
 #endif //PROCESSOR_HPP
