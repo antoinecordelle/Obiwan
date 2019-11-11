@@ -26,6 +26,7 @@ private:
     std::string             mFilePath;
     Parser                  mParser;
     StatProcessor           mStatProcessor;
+    AlertHandler            mAlertHandler;
     std::vector<Metric>     mMetrics;
 };
 
