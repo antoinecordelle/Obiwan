@@ -4,6 +4,7 @@
 #include "../ArgsParser/argsParser.hpp"
 #include "../StatProcessor/statProcessor.hpp"
 #include "../Metrics/metrics.hpp"
+#include "../AlertHandler/alertHandler.hpp"
 
 #include <string>
 #include <vector>
@@ -25,8 +26,7 @@ private:
     std::string             mFilePath;
     Parser                  mParser;
     StatProcessor           mStatProcessor;
-    std::vector<Metric>    mMetrics;
-
+    std::vector<Metric>     mMetrics;
 };
 
 #endif // APPLICATION_HPP

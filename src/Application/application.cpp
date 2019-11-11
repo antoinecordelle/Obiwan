@@ -1,7 +1,7 @@
 #include "application.hpp"
+#include "../Utility/utility.hpp"
 
 #include <iostream>
-#include <cstdlib>
 
 using namespace std;
 
@@ -14,7 +14,7 @@ Application::Application(const Arguments& arguments)
 void Application::run()
 {
     tuple<HttpPacket, bool> InitPacket = mParser.parseOneLine();
-    mStatProcessor.initialize(get<0>(InitPacket));
+    mStatProcessor.initialize(Utility::getHttpPacket(InitPacket));
     processLogFile(InitPacket);
 
     int counter(0);
@@ -28,10 +28,11 @@ void Application::run()
 }
 
 void Application::processLogFile(tuple<HttpPacket, bool> packet) {
-    while (!get<1>(packet))
+    while (!Utility::isOver(packet))
     {
-        processLine(get<0>(packet));
-        generateAlerts(get<0>(packet));
+        processLine(Utility::getHttpPacket(packet));
+        generateAlerts(Utility::getHttpPacket(packet));
+
         // Transmit to front
 
         packet = mParser.parseOneLine();
