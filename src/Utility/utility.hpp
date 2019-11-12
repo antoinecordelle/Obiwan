@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include "../Parser/parser.hpp"
 #include <ncurses.h>
+#include <sstream>
 
 
 class Utility {
@@ -41,5 +42,6 @@ std::pair<Key, Value> Utility::findMaxValue(const std::unordered_map<Key, Value>
     else
         return std::pair<Key, Value>();
 }
+
 
 #endif //UTILITY_HPP

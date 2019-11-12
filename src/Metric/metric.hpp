@@ -15,14 +15,16 @@ public:
     void        computeMetric();
     time_t      getStartTime();
     int         getCounter() const;
-    std::pair<std::string, int> getMostHitResource() const;
+    const std::pair<std::string, int> & getMostHitResource() const;
+    const std::unordered_map<std::string, int> &getResourceHits() const;
+    const std::unordered_map<int, int> &getResponseStatus() const;
 
 private:
     int                                     mCounter;
     time_t                                  mStartTime;
     std::unordered_map<std::string, int>    mResourceHits;
+    std::unordered_map<int, int>            mResponseStatus;
     std::pair<std::string, int>             mMostHitResource;
-public:
 };
 
 #endif //METRICS_HPP

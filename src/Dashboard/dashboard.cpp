@@ -12,7 +12,8 @@ Dashboard::Dashboard(const string &fileName, int threshold)
 ,mPageSize(0)
 ,mPageCount(0)
 ,mIsRunning(true)
-,shouldRefresh(false)
+,shouldRefreshAlerts(false)
+,shouldRefreshMetrics(false)
 {
 }
 
@@ -54,32 +55,36 @@ void Dashboard::run()
                 break;
             case KEY_UP:
                 // Update the focused metric if Up is pressed
-                shouldRefresh = true;
+                shouldRefreshMetrics = true;
                 changeFocusedMetric(false);
                 break;
             case KEY_DOWN:
                 // Update the focused metric if Down is pressed
-                shouldRefresh = true;
+                shouldRefreshMetrics = true;
                 changeFocusedMetric(true);
                 break;
             case KEY_RIGHT:
                 // Update the next metric page if N is pressed
-                shouldRefresh = true;
+                shouldRefreshMetrics = true;
                 navigatePages(false);
                 break;
             case KEY_LEFT:
                 // Update to the previous metric page if P is pressed
-                shouldRefresh = true;
+                shouldRefreshMetrics = true;
                 navigatePages(true);
                 break;
             default:
                 break;
         }
-        if(shouldRefresh)
+        if(shouldRefreshMetrics)
         {
-            shouldRefresh = false;
+            shouldRefreshMetrics = false;
             displayMetrics(metricList);
             displayDetails(metricDetail);
+        }
+        if(shouldRefreshAlerts)
+        {
+            shouldRefreshAlerts = false;
             displayAlerts(alertDisplay);
         }
     }
@@ -125,12 +130,12 @@ void Dashboard::displayOneMetric(WINDOW* metricList, unsigned int position)
         text += Utility::formatTime(&metricTime);
         if (metric.getCounter() == 0)
         {
-            text += ": No hit";
+            text += "  No hit";
         }
         else
         {
-            text += ": " + to_string(metric.getCounter()) + " hits"
-                    + "  |  " + mostHitResource.first + " hit " + to_string(mostHitResource.second) + " times";
+            text += "  " + to_string(metric.getCounter()) + " hits";
+            mvwprintw(metricList, position + 1, 35,  ("  |  " + mostHitResource.first + " hit " + to_string(mostHitResource.second) + " times").c_str());
         }
         mvwprintw(metricList, position + 1, startingPos, text.c_str());
     }
@@ -140,7 +145,23 @@ void Dashboard::displayDetails(WINDOW* metricDetail)
 {
     wclear(metricDetail);
     metricDetail = Utility::initializationBaseWindow(3*LINES/5 - 1, COLS/4, 1, 3*COLS/4 + 1, "Metric details :", false, true, true);
+    Metric& metric = mMetrics[mFocusedMetricIndex];
+    time_t metricTime = metric.getStartTime();
+    int position(1);
+    mvwprintw(metricDetail, position++, 1, ("Time : " + Utility::formatTime(&metricTime, false)).c_str());
+    if(metric.getCounter() != 0)
+    {
+        mvwprintw(metricDetail, position++, 1, ("Hits : " + to_string(metric.getCounter())).c_str());
+        position = displayMap(metricDetail, position, "Status", metric.getResponseStatus());
+        displayMap(metricDetail, position, "Resources", metric.getResourceHits());
+    }
+    else
+    {
+        position++;
+        mvwprintw(metricDetail, position++, 1, "No hit occurred");
+        mvwprintw(metricDetail, position++, 1, "during this frame");
 
+    }
     wrefresh(metricDetail);
 }
 
@@ -149,15 +170,14 @@ void Dashboard::displayAlerts(WINDOW* alertDisplay)
     wclear(alertDisplay);
     alertDisplay = Utility::initializationBaseWindow(2*LINES/5, COLS, 3*LINES/5, 0, "Alerts (metrics from last 120s) : ", false, true, true);
     int position(0);
-    mAlerts.insert(mAlerts.end(), mAlerts.begin(), mAlerts.end());
-    for(unsigned int i = mAlerts.size() - 1; i != -1; i--)
+    for(unsigned int i = mAlerts.size() - 1; i != max(-1, (int)mAlerts.size() - 2*LINES/5 + 1); i--)
     {
         displayOneAlert(alertDisplay, mAlerts[i], position++);
     }
     wrefresh(alertDisplay);
 }
 
-void Dashboard::displayOneAlert(WINDOW* alertDisplay, Alert alert, int position)
+void Dashboard::displayOneAlert(WINDOW* alertDisplay, const Alert &alert, int position)
 {
     time_t alertTime(alert.triggerTime);
 
@@ -173,19 +193,19 @@ void Dashboard::displayOneAlert(WINDOW* alertDisplay, Alert alert, int position)
 }
 
 void Dashboard::addMetrics(std::vector<Metric> newMetricVector) {
-    shouldRefresh = true;
+    shouldRefreshMetrics = true;
     mMetrics.insert(mMetrics.end(), newMetricVector.begin(), newMetricVector.end());
     mMetricsCount+= newMetricVector.size();
 }
 
 void Dashboard::addMetrics(const Metric &metric) {
-    shouldRefresh = true;
+    shouldRefreshMetrics = true;
     mMetrics.push_back(metric);
     mMetricsCount+= 1;
 }
 
 void Dashboard::addAlert(Alert alert) {
-    shouldRefresh = true;
+    shouldRefreshAlerts = true;
     mAlerts.push_back(alert);
 }
 
@@ -203,10 +223,10 @@ void Dashboard::changeFocusedMetric(bool next)
 {
     if(next)
     {
-        if(mFocusedMetricIndex != mMetrics.size() - 1)
+        if(mFocusedMetricIndex != min(mPageSize*(mCurrentPage + 1) - 1, (int)mMetrics.size() - 1))
             mFocusedMetricIndex++;
     }
-    else if(mFocusedMetricIndex != 0)
+    else if(mFocusedMetricIndex != mPageSize*mCurrentPage + 0)
         mFocusedMetricIndex--;
 }
 
