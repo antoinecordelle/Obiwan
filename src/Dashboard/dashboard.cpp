@@ -3,9 +3,11 @@
 
 using namespace std;
 
-Dashboard::Dashboard(const string &fileName, int threshold)
-:mFileName(fileName)
-,mThreshold(threshold)
+Dashboard::Dashboard(const Arguments &arguments)
+:mFileName(arguments.filePath)
+,mThreshold(arguments.threshold)
+,mStatFrame(arguments.statFrame)
+,mAlertFrame(arguments.alertFrame)
 ,mMetricsCount(0)
 ,mFocusedMetricIndex(0)
 ,mCurrentPage(0)
@@ -34,14 +36,14 @@ void Dashboard::run()
     mPageSize = 3*LINES/5 - 2;
     mPageCount = mMetricsCount/mPageSize + 1;
 
-    string headerText = "Logs from " + mFileName +". Metrics every " + to_string(mThreshold) + " second.";
+    string headerText = "Logs from " + mFileName +". Metrics every " + to_string(mStatFrame) + " second.";
     string metricListText = "Metrics list p." + to_string(mCurrentPage + 1) + "/" + to_string(mPageCount) +
                              ": (next page : n, previous : p)";
     header = Utility::initializationBaseWindow(1, COLS, 0, 0, headerText, true, false, true);
     footer = Utility::initializationBaseWindow(1, COLS, LINES - 1, 0, "Press F1 to leave. Press the up and down arrows to navigate through metrics", false, false, false);
     metricList = Utility::initializationBaseWindow(3*LINES/5 - 1, 3*COLS/4, 1, 0, metricListText, false, false, false);
     metricDetail = Utility::initializationBaseWindow(3*LINES/5 - 1, COLS/4, 1, 3*COLS/4 + 1, "Metric details :", false, true, true);
-    alertDisplay = Utility::initializationBaseWindow(2*LINES/5, COLS, 3*LINES/5, 0, "Alerts (metrics from last 120s) : ", false, true, true);
+    alertDisplay = Utility::initializationBaseWindow(2*LINES/5, COLS, 3*LINES/5, 0, "Alerts (metrics from last " + to_string(mAlertFrame) + "s) : ", false, true, true);
     int input;
     timeout(1000);
     while(isRunning())
@@ -168,7 +170,7 @@ void Dashboard::displayDetails(WINDOW* metricDetail)
 void Dashboard::displayAlerts(WINDOW* alertDisplay)
 {
     wclear(alertDisplay);
-    alertDisplay = Utility::initializationBaseWindow(2*LINES/5, COLS, 3*LINES/5, 0, "Alerts (metrics from last 120s) : ", false, true, true);
+    alertDisplay = Utility::initializationBaseWindow(2*LINES/5, COLS, 3*LINES/5, 0, "Alerts (metrics from last " + to_string(mAlertFrame) + "s) : ", false, true, true);
     int position(0);
     for(unsigned int i = mAlerts.size() - 1; i != max(-1, (int)mAlerts.size() - 2*LINES/5 + 1); i--)
     {

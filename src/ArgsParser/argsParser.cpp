@@ -11,8 +11,10 @@ bool ArgsParser::parseArgs(Arguments &args, int argc, char **argv) {
                  << "in case of incoming traffic (2min time frame)." << endl;
             cout << "Parameters : " << endl;
             cout << "  -f / --filePath : path of the csv file to be analysed" << endl;
-            cout << "  -t / --threshold : integer to determine the alert threshold : number of request per second "
+            cout << "  -t / --threshold (default 10) : integer to determine the alert threshold : number of request per second "
                  << "that will trigger an alert" << endl;
+            cout << "  -s / --statFrame (default 10) : integer to determine the time window of every metric computed in second" << endl;
+            cout << "  -a / --alertFrame (default 120) : integer to determine the time window watched by the alerting system" << endl;
             return false;
         }
         if (string(argv[i]) == "-f" || string(argv[i]) == "--filePath") {
@@ -25,6 +27,14 @@ bool ArgsParser::parseArgs(Arguments &args, int argc, char **argv) {
         } else if (string(argv[i]) == "-t" || string(argv[i]) == "--threshold") {
             if (i + 1 < argc) {
                 args.threshold = stoi(argv[++i]);
+            }
+        } else if (string(argv[i]) == "-s" || string(argv[i]) == "--statFrame") {
+            if (i + 1 < argc) {
+                args.statFrame = stoi(argv[++i]);
+            }
+        } else if (string(argv[i]) == "-a" || string(argv[i]) == "--alertFrame") {
+            if (i + 1 < argc) {
+                args.alertFrame = stoi(argv[++i]);
             }
         }
     }

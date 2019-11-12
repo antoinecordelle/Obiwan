@@ -1,16 +1,14 @@
 #include "application.hpp"
 #include "../Utility/utility.hpp"
 
-#include <iostream>
-
 using namespace std;
 
 Application::Application(const Arguments& arguments)
 : mFilePath(arguments.filePath)
 , mParser(arguments.filePath)
-, mStatProcessor(10)
-, mAlertHandler(120, arguments.threshold)
-, mDashboard(arguments.filePath, arguments.threshold)
+, mStatProcessor(arguments.statFrame)
+, mAlertHandler(arguments.alertFrame, arguments.threshold)
+, mDashboard(arguments)
 {
 }
 

@@ -6,6 +6,8 @@
 struct Arguments {
     std::string     filePath = "";
     int             threshold = 10;
+    int             statFrame = 10;
+    int             alertFrame = 120;
 };
 
 class ArgsParser {

@@ -6,13 +6,14 @@
 #include <sstream>
 #include "../Metric/metric.hpp"
 #include "../AlertHandler/alertHandler.hpp"
+#include "../ArgsParser/argsParser.hpp"
 
 class Dashboard {
 public:
     using MetricVectorIte = std::vector<Metric>::iterator;
 
 public:
-    Dashboard(const std::string &fileName, int threshold);
+    Dashboard(const Arguments &arguments);
 
     void run();
     bool isRunning();
@@ -40,6 +41,8 @@ private:
 private:
     std::string             mFileName;
     int                     mThreshold;
+    int                     mStatFrame;
+    int                     mAlertFrame;
     std::vector<Metric>     mMetrics;
     int                     mMetricsCount;
     std::vector<Alert>      mAlerts;
