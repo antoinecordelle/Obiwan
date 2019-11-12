@@ -32,10 +32,10 @@ const pair<std::string, int> & Metric::getMostHitResource() const {
     return mMostHitResource;
 }
 
-const unordered_map<std::string, int> &Metric::getResourceHits() const {
+const map<std::string, int> &Metric::getResourceHits() const {
     return mResourceHits;
 }
 
-const unordered_map<int, int> &Metric::getResponseStatus() const {
+const map<int, int> &Metric::getResponseStatus() const {
     return mResponseStatus;
 }

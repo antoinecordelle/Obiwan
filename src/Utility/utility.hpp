@@ -7,6 +7,7 @@
 #include "../Parser/parser.hpp"
 #include <ncurses.h>
 #include <sstream>
+#include <map>
 
 
 class Utility {
@@ -22,7 +23,7 @@ public:
     static bool keyMapCompare(std::pair<Key, Value> a, std::pair<Key, Value> b);
 
     template <class Key, class Value>
-    static std::pair<Key, Value> findMaxValue(const std::unordered_map<Key, Value> &map);
+    static std::pair<Key, Value> findMaxValue(const std::map<Key, Value> &map);
 
     static WINDOW* initializationBaseWindow(int height, int width, int startY, int startX, const std::string &text, bool center = false, bool withBox = true, bool title = false);
 
@@ -36,11 +37,10 @@ bool Utility::keyMapCompare(std::pair<Key, Value> a, std::pair<Key, Value> b) {
 }
 
 template<class Key, class Value>
-std::pair<Key, Value> Utility::findMaxValue(const std::unordered_map<Key, Value> &map) {
+std::pair<Key, Value> Utility::findMaxValue(const std::map<Key, Value> &map) {
     if (!map.empty())
         return *std::max_element(map.begin(), map.end(), keyMapCompare<Key, Value>);
-    else
-        return std::pair<Key, Value>();
+    return std::pair<Key, Value>();
 }
 
 

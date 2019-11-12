@@ -91,6 +91,5 @@ tuple<HttpPacket, bool> Parser::parseOneLine() {
         }
         return {httpPacket, false};
     }
-    else
-        return {httpPacket, true};
+    return {httpPacket, true};
 }

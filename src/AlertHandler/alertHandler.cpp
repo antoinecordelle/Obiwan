@@ -31,9 +31,7 @@ bool AlertHandler::processLine(const HttpPacket &httpPacket) {
         return (isAlertTriggered && mCurrentCount < mThreshold) ||
                (!isAlertTriggered && mCurrentCount >= mThreshold);
     }
-    else {
-        return false;
-    }
+    return false;
 }
 
 Alert AlertHandler::getAlert(const HttpPacket &httpPacket) {

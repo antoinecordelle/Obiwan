@@ -36,7 +36,7 @@ private:
     void displayOneAlert(WINDOW* alertDisplay, const Alert &alert, int position);
 
     template <class Key, class Value>
-    int displayMap(WINDOW* window, int position, const std::string &title, const std::unordered_map<Key, Value> &map);
+    int displayMap(WINDOW* window, int position, const std::string &title, const std::map<Key, Value> &map);
 
 private:
     std::string             mFileName;
@@ -57,7 +57,7 @@ private:
 
 
 template<class Key, class Value>
-int Dashboard::displayMap(WINDOW* window, int position, const std::string &title, const std::unordered_map<Key, Value> &map)
+int Dashboard::displayMap(WINDOW* window, int position, const std::string &title, const std::map<Key, Value> &map)
 {
     mvwprintw(window, position, 1, title.c_str());
     mvwprintw(window, position++, 13, "| hits");

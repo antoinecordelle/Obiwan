@@ -4,6 +4,7 @@
 #include <ctime>
 #include <string>
 #include <unordered_map>
+#include <map>
 #include "../Parser/parser.hpp"
 
 class Metric {
@@ -16,14 +17,14 @@ public:
     time_t      getStartTime();
     int         getCounter() const;
     const std::pair<std::string, int> & getMostHitResource() const;
-    const std::unordered_map<std::string, int> &getResourceHits() const;
-    const std::unordered_map<int, int> &getResponseStatus() const;
+    const std::map<std::string, int> &getResourceHits() const;
+    const std::map<int, int> &getResponseStatus() const;
 
 private:
     int                                     mCounter;
     time_t                                  mStartTime;
-    std::unordered_map<std::string, int>    mResourceHits;
-    std::unordered_map<int, int>            mResponseStatus;
+    std::map<std::string, int>              mResourceHits;
+    std::map<int, int>                      mResponseStatus;
     std::pair<std::string, int>             mMostHitResource;
 };
 
