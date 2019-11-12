@@ -29,6 +29,7 @@ private:
 private:
     std::queue<HttpPacket>   mPacketQueue;
     int                      mCurrentCount;
+    time_t                   mCurrentTime;
     bool                     isAlertTriggered;
     int                      mTimeWindow;
     int                      mThreshold;
