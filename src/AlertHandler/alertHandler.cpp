@@ -8,10 +8,11 @@ Alert::Alert(time_t time, int count, bool positive)
 
 }
 
-AlertHandler::AlertHandler(int timeWindow)
+AlertHandler::AlertHandler(int timeWindow, int threshold)
 :isAlertTriggered(false)
 ,mCurrentCount(0)
 ,mTimeWindow(timeWindow)
+,mThreshold(threshold*timeWindow)
 {
 }
 
@@ -21,28 +22,29 @@ void AlertHandler::initialize(const HttpPacket &httpPacket) {
 
 bool AlertHandler::processLine(const HttpPacket &httpPacket) {
     addPacket(httpPacket);
-
     removeOldPackets(httpPacket);
+    // If an alert was already triggered and the count went under the threshold, trigger an alert to announce recovery
+    // If no alert was triggered and the count went above the threshold, trigger an alert
+    return (isAlertTriggered && mCurrentCount < mThreshold) ||
+           (!isAlertTriggered && mCurrentCount >= mThreshold);
 }
 
-void AlertHandler::getAlert() {
-
+Alert AlertHandler::getAlert(const HttpPacket &httpPacket) {
+    isAlertTriggered = !isAlertTriggered;
+    return Alert(httpPacket.date, mCurrentCount, isAlertTriggered);
 }
 
 void AlertHandler::addPacket(const HttpPacket &httpPacket)
 {
-    mPacketList.push_back(httpPacket);
+    mPacketQueue.push(httpPacket);
     mCurrentCount++;
 }
 
 void AlertHandler::removeOldPackets(const HttpPacket &httpPacket) {
     time_t currentTime(httpPacket.date);
-    int toDestroy(0);
-    ListIterator iterator(mPacketList.begin());
-    while (iterator->date + mTimeWindow < currentTime)
+    while (mPacketQueue.front().date + mTimeWindow < currentTime)
     {
         mCurrentCount--;
+        mPacketQueue.pop();
     }
-    mPacketList.erase(mPacketList.begin(), iterator);
 }
-

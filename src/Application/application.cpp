@@ -9,7 +9,7 @@ Application::Application(const Arguments& arguments)
 : mFilePath(arguments.filePath)
 , mParser(arguments.filePath)
 , mStatProcessor(10)
-, mAlertHandler(120)
+, mAlertHandler(120, arguments.threshold)
 {
 }
 
@@ -19,21 +19,14 @@ void Application::run()
     mStatProcessor.initialize(Utility::getHttpPacket(InitPacket));
     processLogFile(InitPacket);
 
-    int counter(0);
     cout << mMetrics.size() << endl;
-    for(Metric m : mMetrics)
-    {
-        counter+= m.getCounter();
-        cout << m.getStartTime() << "   " << m.getCounter() << endl;
-    }
-    cout << counter << endl;
 }
 
 void Application::processLogFile(tuple<HttpPacket, bool> packet) {
     while (!Utility::isOver(packet))
     {
-        processLine(Utility::getHttpPacket(packet));
-        generateAlerts(Utility::getHttpPacket(packet));
+        processStats(Utility::getHttpPacket(packet));
+        processAlerts(Utility::getHttpPacket(packet));
 
         // Transmit to front
 
@@ -43,16 +36,25 @@ void Application::processLogFile(tuple<HttpPacket, bool> packet) {
 }
 
 
-void Application::processLine(const HttpPacket& packet) {
+void Application::processStats(const HttpPacket& packet) {
     if(mStatProcessor.processLine(packet))
     {
         vector<Metric> newMetrics = mStatProcessor.getMetrics();
         mMetrics.insert(mMetrics.end(), newMetrics.begin(), newMetrics.end());
+        for (Metric m : newMetrics)
+        {
+            cout << m.getStartTime() << "   " << m.getCounter() << endl;
+        }
     }
 }
 
-void Application::generateAlerts(const HttpPacket& packet) {
-
+void Application::processAlerts(const HttpPacket& packet) {
+    if(mAlertHandler.processLine(packet))
+    {
+        mAlerts.push_back(mAlertHandler.getAlert(packet));
+        cout << "Alert : " << mAlerts[mAlerts.size() - 1].triggerTime << "   " << mAlerts[mAlerts.size() - 1].hitCount
+             << "   " << mAlerts[mAlerts.size() - 1].isPositive << endl;
+    }
 }
 
 void Application::processLastMetric() {

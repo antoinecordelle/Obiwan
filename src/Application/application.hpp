@@ -18,8 +18,8 @@ public:
 
 private:
     void processLogFile(std::tuple<HttpPacket, bool> initPacket);
-    void processLine(const HttpPacket &packet);
-    void generateAlerts(const HttpPacket& packet);
+    void processStats(const HttpPacket &packet);
+    void processAlerts(const HttpPacket& packet);
     void processLastMetric();
 
 private:
@@ -28,6 +28,7 @@ private:
     StatProcessor           mStatProcessor;
     AlertHandler            mAlertHandler;
     std::vector<Metric>     mMetrics;
+    std::vector<Alert>      mAlerts;
 };
 
 #endif // APPLICATION_HPP

@@ -1,7 +1,7 @@
 #ifndef ALERTHANDLER_HPP
 #define ALERTHANDLER_HPP
 
-#include <list>
+#include <queue>
 #include "../Parser/parser.hpp"
 
 struct Alert {
@@ -15,26 +15,23 @@ struct Alert {
 
 class AlertHandler {
 public:
-    using ListIterator = std::list<HttpPacket>::iterator;
-
-public:
-    AlertHandler(int timeWindow);
+    AlertHandler(int timeWindow, int threshold);
 
     void initialize(const HttpPacket &httpPacket);
     bool processLine(const HttpPacket &httpPacket);
 
-    void getAlert();
+    Alert getAlert(const HttpPacket &httpPacket);
 
 private:
     void addPacket(const HttpPacket &httpPacket);
     void removeOldPackets(const HttpPacket &httpPacket);
 
 private:
-    std::list<HttpPacket>   mPacketList;
-    int                     mCurrentCount;
-    bool                    isAlertTriggered;
-    int                     mTimeWindow;
-
+    std::queue<HttpPacket>   mPacketQueue;
+    int                      mCurrentCount;
+    bool                     isAlertTriggered;
+    int                      mTimeWindow;
+    int                      mThreshold;
 };
 
 
