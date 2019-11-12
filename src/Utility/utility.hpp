@@ -3,31 +3,30 @@
 
 #include <string>
 #include <algorithm>
-#include <unordered_map>
-#include "../Parser/parser.hpp"
 #include <ncurses.h>
 #include <sstream>
 #include <map>
+#include "../Parser/parser.hpp"
 
 
 class Utility {
 public:
-    static std::string removeChar(std::string& str, char charToRemove);
+    static std::string              removeChar(std::string& str, char charToRemove);
 
-    static HttpPacket& getHttpPacket(std::tuple<HttpPacket, bool>& packet);
-    static bool isOver(std::tuple<HttpPacket, bool>& packet);
+    static HttpPacket&              getHttpPacket(std::tuple<HttpPacket, bool>& packet);
+    static bool                     isOver(std::tuple<HttpPacket, bool>& packet);
 
-    static std::string getResource(const HttpPacket& httpPacket);
-
-    template <class Key, class Value>
-    static bool keyMapCompare(std::pair<Key, Value> a, std::pair<Key, Value> b);
+    static std::string              getResource(const HttpPacket& httpPacket);
 
     template <class Key, class Value>
-    static std::pair<Key, Value> findMaxValue(const std::map<Key, Value> &map);
+    static bool                     keyMapCompare(std::pair<Key, Value> a, std::pair<Key, Value> b);
 
-    static WINDOW* initializationBaseWindow(int height, int width, int startY, int startX, const std::string &text, bool center = false, bool withBox = true, bool title = false);
+    template <class Key, class Value>
+    static std::pair<Key, Value>    findMaxValue(const std::map<Key, Value> &map);
 
-    static std::string formatTime(const time_t *time, bool includeDate = true);
+    static WINDOW*                  initializationBaseWindow(int height, int width, int startY, int startX, const std::string &text, bool center = false, bool withBox = true, bool title = false);
+
+    static std::string              formatTime(const time_t *time, bool includeDate = true);
 };
 
 // Template functions have to be defined in the header and can't be defined in the cpp file.
@@ -42,6 +41,5 @@ std::pair<Key, Value> Utility::findMaxValue(const std::map<Key, Value> &map) {
         return *std::max_element(map.begin(), map.end(), keyMapCompare<Key, Value>);
     return std::pair<Key, Value>();
 }
-
 
 #endif //UTILITY_HPP

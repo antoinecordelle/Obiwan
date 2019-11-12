@@ -2,10 +2,10 @@
 #define DASHBOARD_HPP
 
 #include <vector>
-#include <ncurses.h>
 #include <sstream>
 #include <mutex>
 #include <atomic>
+#include <ncurses.h>
 #include "../Metric/metric.hpp"
 #include "../AlertHandler/alertHandler.hpp"
 #include "../ArgsParser/argsParser.hpp"
@@ -21,10 +21,6 @@ public:
     bool isRunning();
     void setRunning();
 
-    void changeFocusedMetric(bool next);
-    void navigatePages(bool next);
-
-
     void addMetrics(std::vector<Metric> newMetricVector);
     void addMetrics(const Metric &newMetric);
 
@@ -36,6 +32,9 @@ private:
     void displayDetails(WINDOW *metricDetail);
     void displayAlerts(WINDOW *alertDisplay);
     void displayOneAlert(WINDOW* alertDisplay, const Alert &alert, int position);
+
+    void changeFocusedMetric(bool next);
+    void navigatePages(bool next);
 
     template <class Key, class Value>
     int displayMap(WINDOW* window, int position, const std::string &title, const std::map<Key, Value> &map);
@@ -56,18 +55,16 @@ private:
     std::atomic<bool>       shouldRefreshAlerts;
     std::atomic<bool>       shouldRefreshMetrics;
 
-    std::mutex mAlertLock;
-    std::mutex mMetricLock;
+    std::mutex              mAlertLock;
+    std::mutex              mMetricLock;
 };
 
 
 template<class Key, class Value>
-int Dashboard::displayMap(WINDOW* window, int position, const std::string &title, const std::map<Key, Value> &map)
-{
+int Dashboard::displayMap(WINDOW* window, int position, const std::string &title, const std::map<Key, Value> &map) {
     mvwprintw(window, position, 1, title.c_str());
     mvwprintw(window, position++, 13, "| hits");
-    for (auto ite : map)
-    {
+    for (auto ite : map) {
         std::stringstream firstStr, secondStr;
         firstStr << ite.first;
         secondStr << ite.second;

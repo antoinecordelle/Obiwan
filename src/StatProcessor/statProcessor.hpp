@@ -14,10 +14,10 @@ public:
 public:
     explicit StatProcessor(int timeWindow);
 
-    void initialize(const HttpPacket &httpPacket);
-    bool processLine(const HttpPacket &httpPacket);
+    void                initialize(const HttpPacket &httpPacket);
+    bool                processLine(const HttpPacket &httpPacket);
     std::vector<Metric> getMetrics();
-    Metric getLastMetric();
+    Metric              getLastMetric();
 
 private:
     Metric     mCurrentMetric{};

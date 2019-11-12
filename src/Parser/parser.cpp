@@ -10,8 +10,7 @@ using namespace std;
 Parser::Parser(const std::string& filePath)
 :mFile(filePath)
 {
-    if (mFile.is_open())
-    {
+    if (mFile.is_open()) {
         string headers;
         // Remove first line : header with column names
         getline(mFile, headers);
@@ -20,40 +19,15 @@ Parser::Parser(const std::string& filePath)
         throw invalid_argument("Unable to open file");
 }
 
-Parser::~Parser()
-{
+Parser::~Parser() {
     if (mFile.is_open())
         mFile.close();
-}
-
- tuple<list<HttpPacket>, bool> Parser::parseLines(int numberOfLines) {
-    string line;
-    int counter(0);
-    bool isOver(false);
-    list<HttpPacket> packets = list<HttpPacket>();
-    if (mFile.is_open())
-    {
-        while (counter++ < numberOfLines)
-        {
-            auto [packet, over] = parseOneLine();
-            if (over)
-            {
-                isOver = true;
-                break;
-            }
-            packets.push_back(packet);
-        }
-        return {packets, isOver};
-    }
-    else
-        throw invalid_argument("Unable to open file");
 }
 
 tuple<HttpPacket, bool> Parser::parseOneLine() {
     string line;
     HttpPacket httpPacket = HttpPacket();
-    if( getline(mFile, line))
-    {
+    if( getline(mFile, line)) {
         int state(0);
         string field;
         istringstream lineStream(line);

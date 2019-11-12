@@ -4,7 +4,9 @@
 using namespace std;
 
 StatProcessor::StatProcessor(int timeWindow)
-:mTimeWindow(timeWindow){}
+:mTimeWindow(timeWindow)
+{
+}
 
 void StatProcessor::initialize(const HttpPacket &httpPacket) {
     mCurrentMetric = Metric(httpPacket.date);
@@ -44,6 +46,3 @@ Metric StatProcessor::getLastMetric() {
     mCurrentMetric.computeMetric();
     return mCurrentMetric;
 }
-
-
-

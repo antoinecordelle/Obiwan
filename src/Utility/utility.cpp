@@ -1,5 +1,6 @@
-#include "utility.hpp"
 #include <ctime>
+#include "utility.hpp"
+
 
 using namespace std;
 
@@ -23,13 +24,11 @@ string Utility::getResource(const HttpPacket &httpPacket) {
     return request.substr(begin, end - begin);
 }
 
-WINDOW* Utility::initializationBaseWindow(int height, int width, int startY, int startX, const std::string &text, bool center, bool withBox, bool title)
-{
+WINDOW* Utility::initializationBaseWindow(int height, int width, int startY, int startX, const std::string &text, bool center, bool withBox, bool title) {
     // Tool method to initialize windows
     WINDOW* win;
     win = newwin(height, width, startY, startX);
-    if(withBox)
-    {
+    if(withBox) {
         box(win, 0 , 0);
         if(title)
             mvwprintw(win, 0, 1, text.c_str());
@@ -44,8 +43,7 @@ WINDOW* Utility::initializationBaseWindow(int height, int width, int startY, int
     return win;
 }
 
-std::string Utility::formatTime(const time_t *time, bool includeDate)
-{
+std::string Utility::formatTime(const time_t *time, bool includeDate) {
     const char *format(includeDate ? "%d.%m.%Y %H:%M:%S"
                                    : "%H:%M:%S");
     std::tm* ptm = std::localtime(time);

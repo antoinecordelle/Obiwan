@@ -5,14 +5,11 @@
 #include <string>
 #include <iostream>
 
-class LogErrorException : public std::exception
-{
+class LogErrorException : public std::exception {
 public:
-    [[nodiscard]] const char* what() const noexcept override
-    {
+    [[nodiscard]] const char* what() const noexcept override {
         return "Invalid parsing of log line";
     }
 };
-
 
 #endif //LOGERROREXCEPTION_HPP

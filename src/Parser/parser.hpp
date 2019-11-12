@@ -22,8 +22,7 @@ public:
     ~Parser();
 
 public:
-    std::tuple<std::list<HttpPacket>, bool>     parseLines(int numberOfLines);
-    std::tuple<HttpPacket, bool>                parseOneLine();
+    std::tuple<HttpPacket, bool>  parseOneLine();
 
 private:
     std::ifstream   mFile;

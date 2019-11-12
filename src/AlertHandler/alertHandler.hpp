@@ -5,9 +5,9 @@
 #include "../Parser/parser.hpp"
 
 struct Alert {
-    time_t triggerTime;
-    int hitCount;
-    bool isPositive;
+    time_t  triggerTime;
+    int     hitCount;
+    bool    isPositive;
 
     Alert(time_t time, int count, bool positive);
 };
@@ -17,14 +17,14 @@ class AlertHandler {
 public:
     AlertHandler(int timeWindow, int threshold);
 
-    void initialize(const HttpPacket &httpPacket);
-    bool processLine(const HttpPacket &httpPacket);
+    void    initialize(const HttpPacket &httpPacket);
+    bool    processLine(const HttpPacket &httpPacket);
 
-    Alert getAlert(const HttpPacket &httpPacket);
+    Alert   getAlert(const HttpPacket &httpPacket);
 
 private:
-    void addPacket(const HttpPacket &httpPacket);
-    void removeOldPackets(const HttpPacket &httpPacket);
+    void    addPacket(const HttpPacket &httpPacket);
+    void    removeOldPackets(const HttpPacket &httpPacket);
 
 private:
     std::queue<HttpPacket>   mPacketQueue;
@@ -34,6 +34,5 @@ private:
     int                      mTimeWindow;
     int                      mThreshold;
 };
-
 
 #endif //ALERTHANDLER_HPP

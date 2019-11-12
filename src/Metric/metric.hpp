@@ -3,7 +3,6 @@
 
 #include <ctime>
 #include <string>
-#include <unordered_map>
 #include <map>
 #include "../Parser/parser.hpp"
 
@@ -16,9 +15,9 @@ public:
     void        computeMetric();
     time_t      getStartTime();
     int         getCounter() const;
-    const std::pair<std::string, int> & getMostHitResource() const;
-    const std::map<std::string, int> &getResourceHits() const;
-    const std::map<int, int> &getResponseStatus() const;
+    const std::pair<std::string, int>   &getMostHitResource() const;
+    const std::map<std::string, int>    &getResourceHits() const;
+    const std::map<int, int>            &getResponseStatus() const;
 
 private:
     int                                     mCounter;

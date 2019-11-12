@@ -39,15 +39,13 @@ Alert AlertHandler::getAlert(const HttpPacket &httpPacket) {
     return Alert(httpPacket.date, mCurrentCount, isAlertTriggered);
 }
 
-void AlertHandler::addPacket(const HttpPacket &httpPacket)
-{
+void AlertHandler::addPacket(const HttpPacket &httpPacket) {
     mPacketQueue.push(httpPacket);
     mCurrentCount++;
 }
 
 void AlertHandler::removeOldPackets(const HttpPacket &httpPacket) {
-    while (mPacketQueue.front().date + mTimeWindow < mCurrentTime)
-    {
+    while (mPacketQueue.front().date + mTimeWindow < mCurrentTime) {
         mCurrentCount--;
         mPacketQueue.pop();
     }

@@ -15,5 +15,4 @@ public:
     static bool parseArgs(Arguments& args, int argc, char *argv[]);
 };
 
-
 #endif //ARGSPARSER_HPP
