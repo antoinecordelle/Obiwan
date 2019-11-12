@@ -9,6 +9,7 @@
 
 #include <string>
 #include <vector>
+#include <thread>
 
 class Application
 {
@@ -18,6 +19,8 @@ public:
     void run();
 
 private:
+    void launchDashboardThread();
+    void stopDashboardThread();
     void processLogFile(std::tuple<HttpPacket, bool> initPacket);
     void processStats(const HttpPacket &packet);
     void processAlerts(const HttpPacket& packet);
@@ -28,7 +31,10 @@ private:
     Parser                  mParser;
     StatProcessor           mStatProcessor;
     AlertHandler            mAlertHandler;
+
+    std::thread             mDashboardThread;
     Dashboard               mDashboard;
+
 };
 
 #endif // APPLICATION_HPP

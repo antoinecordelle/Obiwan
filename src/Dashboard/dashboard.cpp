@@ -97,10 +97,13 @@ void Dashboard::run()
     delwin(metricDetail);
     delwin(alertDisplay);
     endwin();
+    mIsRunning = false;
 }
 
 void Dashboard::displayMetrics(WINDOW* metricList)
 {
+    std::lock_guard<std::mutex> lock(mAlertLock);
+    mPageCount = mMetricsCount/mPageSize + 1;
     wclear(metricList);
     string metricListText = "Metrics list p." + to_string(mCurrentPage + 1) + "/" + to_string(mPageCount) +
                             ": (next: left arrow, previous: right)";
@@ -145,6 +148,7 @@ void Dashboard::displayOneMetric(WINDOW* metricList, unsigned int position)
 
 void Dashboard::displayDetails(WINDOW* metricDetail)
 {
+    std::lock_guard<std::mutex> lock(mMetricLock);
     wclear(metricDetail);
     metricDetail = Utility::initializationBaseWindow(3*LINES/5 - 1, COLS/4, 1, 3*COLS/4 + 1, "Metric details :", false, true, true);
     Metric& metric = mMetrics[mFocusedMetricIndex];
@@ -169,6 +173,7 @@ void Dashboard::displayDetails(WINDOW* metricDetail)
 
 void Dashboard::displayAlerts(WINDOW* alertDisplay)
 {
+    std::lock_guard<std::mutex> lock(mAlertLock);
     wclear(alertDisplay);
     alertDisplay = Utility::initializationBaseWindow(2*LINES/5, COLS, 3*LINES/5, 0, "Alerts (metrics from last " + to_string(mAlertFrame) + "s) : ", false, true, true);
     int position(0);
@@ -195,18 +200,21 @@ void Dashboard::displayOneAlert(WINDOW* alertDisplay, const Alert &alert, int po
 }
 
 void Dashboard::addMetrics(std::vector<Metric> newMetricVector) {
+    std::lock_guard<std::mutex> lock(mMetricLock);
     shouldRefreshMetrics = true;
     mMetrics.insert(mMetrics.end(), newMetricVector.begin(), newMetricVector.end());
     mMetricsCount+= newMetricVector.size();
 }
 
 void Dashboard::addMetrics(const Metric &metric) {
+    std::lock_guard<std::mutex> lock(mMetricLock);
     shouldRefreshMetrics = true;
     mMetrics.push_back(metric);
     mMetricsCount+= 1;
 }
 
 void Dashboard::addAlert(Alert alert) {
+    std::lock_guard<std::mutex> lock(mAlertLock);
     shouldRefreshAlerts = true;
     mAlerts.push_back(alert);
 }

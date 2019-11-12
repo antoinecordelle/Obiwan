@@ -4,6 +4,8 @@
 #include <vector>
 #include <ncurses.h>
 #include <sstream>
+#include <mutex>
+#include <atomic>
 #include "../Metric/metric.hpp"
 #include "../AlertHandler/alertHandler.hpp"
 #include "../ArgsParser/argsParser.hpp"
@@ -13,7 +15,7 @@ public:
     using MetricVectorIte = std::vector<Metric>::iterator;
 
 public:
-    Dashboard(const Arguments &arguments);
+    explicit Dashboard(const Arguments &arguments);
 
     void run();
     bool isRunning();
@@ -50,9 +52,12 @@ private:
     int                     mCurrentPage;
     int                     mPageSize;
     int                     mPageCount;
-    bool                    mIsRunning;
-    bool                    shouldRefreshAlerts;
-    bool                    shouldRefreshMetrics;
+    std::atomic<bool>       mIsRunning;
+    std::atomic<bool>       shouldRefreshAlerts;
+    std::atomic<bool>       shouldRefreshMetrics;
+
+    std::mutex mAlertLock;
+    std::mutex mMetricLock;
 };
 
 

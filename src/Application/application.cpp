@@ -14,20 +14,30 @@ Application::Application(const Arguments& arguments)
 
 void Application::run()
 {
+    // Initialization
+    launchDashboardThread();
     tuple<HttpPacket, bool> InitPacket = mParser.parseOneLine();
     mStatProcessor.initialize(Utility::getHttpPacket(InitPacket));
+
     processLogFile(InitPacket);
-    mDashboard.run();
+}
+
+void Application::launchDashboardThread()
+{
+    // Launch the dashboard main menu in its thread
+    mDashboard.setRunning();
+    mDashboardThread = thread(&Dashboard::run, &mDashboard);
 }
 
 void Application::processLogFile(tuple<HttpPacket, bool> packet) {
-    while (!Utility::isOver(packet))
+    while (!Utility::isOver(packet) && mDashboard.isRunning())
     {
         processStats(Utility::getHttpPacket(packet));
         processAlerts(Utility::getHttpPacket(packet));
         packet = mParser.parseOneLine();
     }
     processLastMetric();
+    mDashboardThread.join();
 }
 
 
