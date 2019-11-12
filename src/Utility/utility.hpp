@@ -23,6 +23,7 @@ public:
     static std::pair<Key, Value> findMaxValue(const std::unordered_map<Key, Value> &map);
 };
 
+// Template functions have to be defined in the header and can't be defined in the cpp file.
 template<class Key, class Value>
 bool Utility::keyMapCompare(std::pair<Key, Value> a, std::pair<Key, Value> b) {
     return a.second < b.second;

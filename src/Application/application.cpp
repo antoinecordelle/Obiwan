@@ -18,8 +18,7 @@ void Application::run()
     tuple<HttpPacket, bool> InitPacket = mParser.parseOneLine();
     mStatProcessor.initialize(Utility::getHttpPacket(InitPacket));
     processLogFile(InitPacket);
-
-    cout << mMetrics.size() << endl;
+    mDashboard.run();
 }
 
 void Application::processLogFile(tuple<HttpPacket, bool> packet) {
@@ -27,9 +26,6 @@ void Application::processLogFile(tuple<HttpPacket, bool> packet) {
     {
         processStats(Utility::getHttpPacket(packet));
         processAlerts(Utility::getHttpPacket(packet));
-
-        // Transmit to front
-
         packet = mParser.parseOneLine();
     }
     processLastMetric();
@@ -39,28 +35,20 @@ void Application::processLogFile(tuple<HttpPacket, bool> packet) {
 void Application::processStats(const HttpPacket& packet) {
     if(mStatProcessor.processLine(packet))
     {
-        vector<Metric> newMetrics = mStatProcessor.getMetrics();
-        mMetrics.insert(mMetrics.end(), newMetrics.begin(), newMetrics.end());
-        for (Metric m : newMetrics)
-        {
-            cout << m.getStartTime() << "   " << m.getCounter() << "  " << m.getMostHitResource().first << " "  <<
-            m.getMostHitResource().second << endl;
-        }
+        vector<Metric> newMetrics(mStatProcessor.getMetrics());
+        mDashboard.addMetrics(newMetrics);
     }
 }
 
 void Application::processAlerts(const HttpPacket& packet) {
     if(mAlertHandler.processLine(packet))
     {
-        mAlerts.push_back(mAlertHandler.getAlert(packet));
-        cout << "Alert : " << mAlerts[mAlerts.size() - 1].triggerTime << "   " << mAlerts[mAlerts.size() - 1].hitCount
-             << "   " << mAlerts[mAlerts.size() - 1].isPositive << endl;
+        Alert newAlert(mAlertHandler.getAlert(packet));
+        mDashboard.addAlert(newAlert);
     }
 }
 
 void Application::processLastMetric() {
-    mMetrics.push_back(mStatProcessor.getLastMetric());
-    auto m = mMetrics.back();
-    cout << m.getStartTime() << "   " << m.getCounter() << "  " << m.getMostHitResource().first << " "  <<
-         m.getMostHitResource().second << endl;
+    Metric newMetric(mStatProcessor.getLastMetric());
+    mDashboard.addMetrics(newMetric);
 }

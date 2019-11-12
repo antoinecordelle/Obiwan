@@ -5,6 +5,7 @@
 #include "../StatProcessor/statProcessor.hpp"
 #include "../Metric/metric.hpp"
 #include "../AlertHandler/alertHandler.hpp"
+#include "../Dashboard/dashboard.hpp"
 
 #include <string>
 #include <vector>
@@ -14,7 +15,7 @@ class Application
 public:
     explicit Application(const Arguments& arguments);
 
-    void            run();
+    void run();
 
 private:
     void processLogFile(std::tuple<HttpPacket, bool> initPacket);
@@ -27,8 +28,7 @@ private:
     Parser                  mParser;
     StatProcessor           mStatProcessor;
     AlertHandler            mAlertHandler;
-    std::vector<Metric>     mMetrics;
-    std::vector<Alert>      mAlerts;
+    Dashboard               mDashboard;
 };
 
 #endif // APPLICATION_HPP

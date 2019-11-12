@@ -1,3 +1,6 @@
+find_package(Curses REQUIRED)
+include_directories(${CURSES_INCLUDE_DIR})
+
 file(
         GLOB_RECURSE
         sources
@@ -6,7 +9,11 @@ file(
 
 add_executable(app ${sources})
 
+target_link_libraries(app ${CURSES_LIBRARIES})
+
 target_link_libraries (app ${CMAKE_THREAD_LIBS_INIT})
+
+target_include_directories(app PUBLIC ${CURSES_INCLUDE_DIR})
 
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/app
     DESTINATION bin
