@@ -19,7 +19,7 @@ bool ArgsParser::parseArgs(Arguments &args, int argc, char **argv) {
             }
         } else if (string(argv[i]) == "-t" || string(argv[i]) == "--threshold") {
             if (i + 1 < argc) {
-                args.threshold = atoi(argv[i++]);
+                args.threshold = stoi(argv[++i]);
             }
         }
     }
