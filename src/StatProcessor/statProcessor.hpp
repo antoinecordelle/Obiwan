@@ -5,7 +5,7 @@
 #include <list>
 #include <vector>
 #include "../Parser/parser.hpp"
-#include "../Metrics/metrics.hpp"
+#include "../Metric/metric.hpp"
 
 class StatProcessor {
 public:

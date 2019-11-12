@@ -5,7 +5,6 @@ Alert::Alert(time_t time, int count, bool positive)
 ,hitCount(count)
 ,isPositive(positive)
 {
-
 }
 
 AlertHandler::AlertHandler(int timeWindow, int threshold)

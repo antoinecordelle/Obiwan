@@ -1,5 +1,4 @@
 #include "utility.hpp"
-#include <algorithm>
 
 using namespace std;
 
@@ -14,4 +13,11 @@ HttpPacket &Utility::getHttpPacket(std::tuple<HttpPacket, bool>& packet) {
 
 bool Utility::isOver(std::tuple<HttpPacket, bool>& packet) {
     return std::get<1>(packet);
+}
+
+string Utility::getResource(const HttpPacket &httpPacket) {
+    string request(httpPacket.request);
+    int begin(request.find('/'));
+    int end(min(request.find('/', begin + 1), request.find(' ', begin + 1)));
+    return request.substr(begin, end - begin);
 }

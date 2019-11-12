@@ -43,7 +43,8 @@ void Application::processStats(const HttpPacket& packet) {
         mMetrics.insert(mMetrics.end(), newMetrics.begin(), newMetrics.end());
         for (Metric m : newMetrics)
         {
-            cout << m.getStartTime() << "   " << m.getCounter() << endl;
+            cout << m.getStartTime() << "   " << m.getCounter() << "  " << m.getMostHitResource().first << " "  <<
+            m.getMostHitResource().second << endl;
         }
     }
 }
@@ -59,4 +60,7 @@ void Application::processAlerts(const HttpPacket& packet) {
 
 void Application::processLastMetric() {
     mMetrics.push_back(mStatProcessor.getLastMetric());
+    auto m = mMetrics.back();
+    cout << m.getStartTime() << "   " << m.getCounter() << "  " << m.getMostHitResource().first << " "  <<
+         m.getMostHitResource().second << endl;
 }

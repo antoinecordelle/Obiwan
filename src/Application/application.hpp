@@ -3,7 +3,7 @@
 
 #include "../ArgsParser/argsParser.hpp"
 #include "../StatProcessor/statProcessor.hpp"
-#include "../Metrics/metrics.hpp"
+#include "../Metric/metric.hpp"
 #include "../AlertHandler/alertHandler.hpp"
 
 #include <string>
