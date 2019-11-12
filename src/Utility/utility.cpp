@@ -1,4 +1,5 @@
 #include "utility.hpp"
+#include <ctime>
 
 using namespace std;
 
@@ -41,4 +42,14 @@ WINDOW* Utility::initializationBaseWindow(int height, int width, int startY, int
         mvwprintw(win, 0, 0, text.c_str());
     wrefresh(win);
     return win;
+}
+
+std::string Utility::formatTime(const time_t *time, bool includeDate)
+{
+    const char *format(includeDate ? "%d.%m.%Y %H:%M:%S"
+                                   : "%H:%M:%S");
+    std::tm* ptm = std::localtime(time);
+    char buffer[32];
+    std::strftime(buffer, 32, format, ptm);
+    return buffer;
 }

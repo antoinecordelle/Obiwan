@@ -24,6 +24,8 @@ public:
     static std::pair<Key, Value> findMaxValue(const std::unordered_map<Key, Value> &map);
 
     static WINDOW* initializationBaseWindow(int height, int width, int startY, int startX, const std::string &text, bool center = false, bool withBox = true, bool title = false);
+
+    static std::string formatTime(const time_t *time, bool includeDate = true);
 };
 
 // Template functions have to be defined in the header and can't be defined in the cpp file.

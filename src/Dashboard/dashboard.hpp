@@ -31,6 +31,7 @@ private:
     void displayOneMetric(WINDOW *metricList, unsigned int position);
     void displayDetails(WINDOW *metricDetail);
     void displayAlerts(WINDOW *alertDisplay);
+    void displayOneAlert(WINDOW* alertDisplay, Alert alert, int position);
 
 private:
     std::string             mFileName;
