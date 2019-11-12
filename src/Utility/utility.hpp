@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include "../Parser/parser.hpp"
+#include <ncurses.h>
 
 
 class Utility {
@@ -21,6 +22,8 @@ public:
 
     template <class Key, class Value>
     static std::pair<Key, Value> findMaxValue(const std::unordered_map<Key, Value> &map);
+
+    static WINDOW* initializationBaseWindow(int height, int width, int startY, int startX, const std::string &text, bool center = false, bool withBox = true, bool title = false);
 };
 
 // Template functions have to be defined in the header and can't be defined in the cpp file.

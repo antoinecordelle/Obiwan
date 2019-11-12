@@ -10,6 +10,7 @@ Application::Application(const Arguments& arguments)
 , mParser(arguments.filePath)
 , mStatProcessor(10)
 , mAlertHandler(120, arguments.threshold)
+, mDashboard(arguments.filePath, arguments.threshold)
 {
 }
 

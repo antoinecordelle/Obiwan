@@ -21,3 +21,24 @@ string Utility::getResource(const HttpPacket &httpPacket) {
     int end(min(request.find('/', begin + 1), request.find(' ', begin + 1)));
     return request.substr(begin, end - begin);
 }
+
+WINDOW* Utility::initializationBaseWindow(int height, int width, int startY, int startX, const std::string &text, bool center, bool withBox, bool title)
+{
+    // Tool method to initialize windows
+    WINDOW* win;
+    win = newwin(height, width, startY, startX);
+    if(withBox)
+    {
+        box(win, 0 , 0);
+        if(title)
+            mvwprintw(win, 0, 1, text.c_str());
+        else if(!center)
+            mvwprintw(win, 1, 1, text.c_str());
+        else
+            mvwprintw(win, 1, max(COLS/2 - 6, 0), text.c_str());
+    }
+    else
+        mvwprintw(win, 0, 0, text.c_str());
+    wrefresh(win);
+    return win;
+}

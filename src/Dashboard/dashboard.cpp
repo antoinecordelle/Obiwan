@@ -1,33 +1,48 @@
 #include "dashboard.hpp"
 
+#include <utility>
+#include "../Utility/utility.hpp"
+
 using namespace std;
 
-Dashboard::Dashboard()
-:mIsRunning(true)
+Dashboard::Dashboard(const string &fileName, int threshold)
+:mFileName(fileName)
+,mThreshold(threshold)
+,mMetricsCount(0)
+,mFocusedMetricIndex(0)
+,mCurrentPage(0)
+,mPageSize(0)
+,mPageCount(0)
+,mIsRunning(true)
+,shouldRefresh(false)
 {
-
 }
 
 void Dashboard::run()
 {
     WINDOW* header;
     WINDOW* footer;
-    WINDOW* metricsList;
+    WINDOW* metricList;
     WINDOW* metricDetail;
     WINDOW* alertDisplay;
 
-    mFocusedMetric = mMetrics.begin();
     initscr();
     curs_set(0);
     clear();
     refresh();
     noecho();
     keypad(stdscr, TRUE);
-    header = initializationBaseWindow(1, COLS, 0, 0, "Logs from (insert file). Metrics every (insert sec) second.", true, false, true);
-    footer = initializationBaseWindow(1, COLS, LINES - 1, 0, "Press F1 to leave. Press the up and down arrows to navigate through metrics", false, false, false);
-    metricsList = initializationBaseWindow(3*LINES/5 - 1, 3*COLS/4, 1, 0, "Metrics list :", false, false, false);
-    metricDetail = initializationBaseWindow(3*LINES/5 - 1, COLS/4, 1, 3*COLS/4 + 1, "Metric details :", false, true, true);
-    alertDisplay = initializationBaseWindow(2*LINES/5, COLS, 3*LINES/5, 0, "Alerts (metrics from last 120s) : ", false, true, true);
+    mPageSize = 3*LINES/5 - 2;
+    mPageCount = mMetricsCount/mPageSize + 1;
+
+    string headerText = "Logs from " + mFileName +". Metrics every " + to_string(mThreshold) + " second.";
+    string metricListText = "Metrics list p." + to_string(mCurrentPage + 1) + "/" + to_string(mPageCount) +
+                             ": (next page : n, previous : p)";
+    header = Utility::initializationBaseWindow(1, COLS, 0, 0, headerText, true, false, true);
+    footer = Utility::initializationBaseWindow(1, COLS, LINES - 1, 0, "Press F1 to leave. Press the up and down arrows to navigate through metrics", false, false, false);
+    metricList = Utility::initializationBaseWindow(3*LINES/5 - 1, 3*COLS/4, 1, 0, metricListText, false, false, false);
+    metricDetail = Utility::initializationBaseWindow(3*LINES/5 - 1, COLS/4, 1, 3*COLS/4 + 1, "Metric details :", false, true, true);
+    alertDisplay = Utility::initializationBaseWindow(2*LINES/5, COLS, 3*LINES/5, 0, "Alerts (metrics from last 120s) : ", false, true, true);
     int input;
     timeout(1000);
     while(isRunning())
@@ -41,56 +56,106 @@ void Dashboard::run()
                 break;
             case KEY_UP:
                 // Update the focused metric if Up is pressed
-                changeFocusedMetric(true);
+                shouldRefresh = true;
+                changeFocusedMetric(false);
                 break;
             case KEY_DOWN:
                 // Update the focused metric if Down is pressed
+                shouldRefresh = true;
                 changeFocusedMetric(true);
+                break;
+            case KEY_RIGHT:
+                // Update the next metric page if N is pressed
+                shouldRefresh = true;
+                navigatePages(false);
+                break;
+            case KEY_LEFT:
+                // Update to the previous metric page if P is pressed
+                shouldRefresh = true;
+                navigatePages(true);
                 break;
             default:
                 break;
+        }
+        if(shouldRefresh)
+        {
+            shouldRefresh = false;
+            displayMetrics(metricList);
+            displayDetails(metricDetail);
+            displayAlerts(alertDisplay);
         }
     }
 
     delwin(header);
     delwin(footer);
-    delwin(metricsList);
+    delwin(metricList);
     delwin(metricDetail);
     delwin(alertDisplay);
     endwin();
 }
 
-WINDOW* Dashboard::initializationBaseWindow(int height, int width, int startY, int startX, std::string text, bool center, bool withBox, bool title)
+void Dashboard::displayMetrics(WINDOW* metricList)
 {
-    // Tool method to initialize windows
-    WINDOW* win;
-    win = newwin(height, width, startY, startX);
-    if(withBox)
+    wclear(metricList);
+    string metricListText = "Metrics list p." + to_string(mCurrentPage + 1) + "/" + to_string(mPageCount) +
+                            ": (next : left arrow, previous : right)";
+    metricList = Utility::initializationBaseWindow(3*LINES/5 - 1, 3*COLS/4, 1, 0, metricListText, false, false, false);
+
+    for (unsigned int i(0); i < mPageSize; i++)
     {
-        box(win, 0 , 0);
-        if(title)
-            mvwprintw(win, 0, 1, text.c_str());
-        else if(!center)
-            mvwprintw(win, 1, 1, text.c_str());
-        else
-            mvwprintw(win, 1, max(COLS/2 - 6, 0), text.c_str());
+        displayOneMetric(metricList, i);
     }
-    else
-        mvwprintw(win, 0, 0, text.c_str());
-    wrefresh(win);
-    return win;
+
+    wrefresh(metricList);
 }
 
+void Dashboard::displayOneMetric(WINDOW* metricList, unsigned int position)
+{
+    unsigned int metricIndex(position + mPageSize*mCurrentPage);
+    if (metricIndex < mMetrics.size())
+    {
+        int startingPos = 2;
+        string text;
+        if (metricIndex == mFocusedMetricIndex)
+        {
+            text += 'X';
+            startingPos = 1;
+        }
+        text += to_string(mMetrics[metricIndex].getStartTime());
+        mvwprintw(metricList, position + 1, startingPos, text.c_str());
+    }
+}
+
+void Dashboard::displayDetails(WINDOW* metricDetail)
+{
+    wclear(metricDetail);
+    metricDetail = Utility::initializationBaseWindow(3*LINES/5 - 1, COLS/4, 1, 3*COLS/4 + 1, "Metric details :", false, true, true);
+
+    wrefresh(metricDetail);
+}
+
+void Dashboard::displayAlerts(WINDOW* alertDisplay)
+{
+    wclear(alertDisplay);
+    alertDisplay = Utility::initializationBaseWindow(2*LINES/5, COLS, 3*LINES/5, 0, "Alerts (metrics from last 120s) : ", false, true, true);
+
+    wrefresh(alertDisplay);
+}
 
 void Dashboard::addMetrics(std::vector<Metric> newMetricVector) {
+    shouldRefresh = true;
     mMetrics.insert(mMetrics.end(), newMetricVector.begin(), newMetricVector.end());
+    mMetricsCount+= newMetricVector.size();
 }
 
-void Dashboard::addMetrics(Metric metric) {
+void Dashboard::addMetrics(const Metric &metric) {
+    shouldRefresh = true;
     mMetrics.push_back(metric);
+    mMetricsCount+= 1;
 }
 
 void Dashboard::addAlert(Alert alert) {
+    shouldRefresh = true;
     mAlerts.push_back(alert);
 }
 
@@ -108,11 +173,28 @@ void Dashboard::changeFocusedMetric(bool next)
 {
     if(next)
     {
-        if(mFocusedMetric != mMetrics.begin())
-            mFocusedMetric--;
+        if(mFocusedMetricIndex != mMetrics.size() - 1)
+            mFocusedMetricIndex++;
     }
-    else
-    if(++mFocusedMetric == mMetrics.end())
-        mFocusedMetric--;
+    else if(mFocusedMetricIndex != 0)
+        mFocusedMetricIndex--;
+}
+
+void Dashboard::navigatePages(bool next) {
+    if(next)
+    {
+        if(mCurrentPage != 0)
+        {
+            mCurrentPage--;
+            if (mCurrentPage*mPageSize < mMetrics.size())
+                mFocusedMetricIndex = mCurrentPage*mPageSize;
+        }
+    }
+    else if(mCurrentPage != mPageCount - 1)
+    {
+        mCurrentPage++;
+        if (mCurrentPage*mPageSize < mMetrics.size())
+            mFocusedMetricIndex = mCurrentPage*mPageSize;
+    }
 }
 

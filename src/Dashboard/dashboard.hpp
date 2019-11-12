@@ -11,27 +11,39 @@ public:
     using MetricVectorIte = std::vector<Metric>::iterator;
 
 public:
-    Dashboard();
+    Dashboard(const std::string &fileName, int threshold);
 
     void run();
     bool isRunning();
     void setRunning();
 
-    WINDOW* initializationBaseWindow(int height, int width, int startY, int startX, std::string text, bool center = false, bool withBox = true, bool title = false);
-
     void changeFocusedMetric(bool next);
+    void navigatePages(bool next);
 
 
     void addMetrics(std::vector<Metric> newMetricVector);
-    void addMetrics(Metric newMetric);
+    void addMetrics(const Metric &newMetric);
 
     void addAlert(Alert alert);
 
 private:
+    void displayMetrics(WINDOW *metricList);
+    void displayOneMetric(WINDOW *metricList, unsigned int position);
+    void displayDetails(WINDOW *metricDetail);
+    void displayAlerts(WINDOW *alertDisplay);
+
+private:
+    std::string             mFileName;
+    int                     mThreshold;
     std::vector<Metric>     mMetrics;
+    int                     mMetricsCount;
     std::vector<Alert>      mAlerts;
-    MetricVectorIte         mFocusedMetric;
+    int                     mFocusedMetricIndex;
+    int                     mCurrentPage;
+    int                     mPageSize;
+    int                     mPageCount;
     bool                    mIsRunning;
+    bool                    shouldRefresh;
 };
 
 
