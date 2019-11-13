@@ -11,7 +11,7 @@
 #include "../AlertHandler/alertHandler.hpp"
 #include "../ArgsParser/argsParser.hpp"
 
-/// Console user interface using the ncurses libray
+/// Console user interface using the ncurses library
 class Dashboard {
 public:
     using MetricVectorIte = std::vector<Metric>::iterator;

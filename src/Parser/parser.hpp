@@ -16,6 +16,7 @@ struct HttpPacket {
     int             bytes;
 };
 
+/// Class used to parse a csv log file and send back HttpPacket objects
 class Parser {
 public:
     explicit Parser(const std::string& filePath);
