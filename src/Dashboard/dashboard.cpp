@@ -20,7 +20,6 @@ Dashboard::Dashboard(const Arguments &arguments)
 }
 
 void Dashboard::run() {
-
     initscr();
     curs_set(0);
     clear();
@@ -62,7 +61,7 @@ void Dashboard::displayMetrics(WindowPtr &metricList) {
     string metricListText = "Metrics list p." + to_string(mCurrentPage + 1) + "/" + to_string(mPageCount) +
                             ": (next: left arrow, previous: right)";
     metricList = Utility::initializationBaseWindow(3*LINES/5 - 1, 3*COLS/4, 1, 0, metricListText, false, false, false);
-
+    
     for (unsigned int i(0); i < mPageSize; i++) {
         displayOneMetric(metricList, i);
     }
