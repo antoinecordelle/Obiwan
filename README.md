@@ -37,28 +37,16 @@ The program has been tested on both Linux and MacOS. It will not work with Windo
 
 ## Installation :
 
-### Libs for Linux :
+### Libs installation  :
 
-**Libs installation**
+**Libs for Linux**
 ```
 apt install cmake
-apt install ncurses
+apt install libncurses-dev
 apt install doxygen   # to generate doc
 ```
-**Google Test installation**
-```
-git clone https://github.com/google/googletest
-cd googletest
-mkdir build
-cd build
-cmake ..
-make
-make install
-```
 
-### Libs for MacOS
-
-**Libs installation**
+**Libs for MacOS**
 ```
 brew install cmake
 brew install ncurses
@@ -95,10 +83,10 @@ In the (project)/build folder :
 
 To run the program :
 In the (project)/build folder : 
-```./src/app```
+```./src/app -f filePath.txt``` 
 
 Parameters :<br>
-- ```-f / --filePath fileName.txt``` : path of the csv file to be parsed (required)
+- ```-f / --filePath filePath.txt``` : path of the csv file to be parsed (required)
 - ```-t / --threshold 10``` (default 10): integer to determine the alert threshold : number of request per second that will trigger an alert
 - ```-s / --statFrame 10``` (default 10): integer to determine the time window of every metric computed in second
 - ```-a / --alertFrame 120``` (default 120): integer to determine the time window watched by the alerting system
@@ -122,9 +110,80 @@ Most of the documentation is located in the header files.
 
 ## Dependencies
 
-This program uses :
-Ncurses for the console interface : C library the one used in programs like htop or vim for instance
+This program uses : <br>
+- Ncurses for the console interface : C library used in programs like htop or vim for instance
 
-Google Test : C++ test library
+- Google Test : C++ test library
 
-Doxygen
+- Doxygen
+
+# Architecture
+
+## Overview
+
+### Global architecture
+
+### Lib choices
+
+**Curses** is the console interface library used for most of the console programs used in Unix systems like htop or vim. 
+To build a console interface, using ncurses was the logical choice and a quite interesting C library to use.
+
+**GoogleTest** is one of the main C++ test libraries (with QTest and Boost Test)
+
+**Doxygen** allows to generate a complete documentation from a templated header commenting. 
+Therefore, most of the comments are located in the headers, allowing more readable source files.
+
+## Structure
+
+
+
+## File structure
+```
+. 
+├── /src                    
+│   ├─── /AlertHander       
+│   ├─── /Application
+│   ├─── /ArgsParser
+│   ├─── /Dashboard
+│   ├─── /Error
+│   ├─── /Metric
+│   ├─── /Parser
+│   ├─── /StatProcessor
+│   ├─── /Utility
+│   ├─ CMakeLists.txt           
+│   └─ main.cpp   
+├── /doc  
+│   ├─ CMakeLists.txt      
+│   └─ Doxyfile.in
+├── /test
+│   ├─ CMakeLists.txt           
+│   └─ test.cpp   
+└─ CMakeLists.txt           
+```
+
+# Possible Improvements
+
+### Processing improvements :
+
+
+### Dashboard specific improvements :
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
