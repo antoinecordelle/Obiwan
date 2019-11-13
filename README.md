@@ -97,7 +97,13 @@ To run the program :
 In the (project)/build folder : 
 ```./src/app```
 
-
+Parameters :<br>
+- ```-f / --filePath fileName.txt``` : path of the csv file to be parsed (required)
+- ```-t / --threshold 10``` (default 10): integer to determine the alert threshold : number of request per second that will trigger an alert
+- ```-s / --statFrame 10``` (default 10): integer to determine the time window of every metric computed in second
+- ```-a / --alertFrame 120``` (default 120): integer to determine the time window watched by the alerting system
+- ```-h ``` : help message on parameters and overview 
+    
 ## Documentation
 
 To generate the documentation :
