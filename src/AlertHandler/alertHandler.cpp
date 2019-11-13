@@ -23,6 +23,7 @@ void AlertHandler::initialize(const HttpPacket &httpPacket) {
 
 bool AlertHandler::processLine(const HttpPacket &httpPacket) {
     addPacket(httpPacket);
+    // If we changed of second with the new packet, remove the old packets and see if we need to trigger an alert
     if (mCurrentTime != httpPacket.date) {
         mCurrentTime = httpPacket.date;
         removeOldPackets(httpPacket);
