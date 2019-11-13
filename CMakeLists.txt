@@ -6,3 +6,8 @@ set (CMAKE_CXX_STANDARD 17)
 project(Obiwan)
 
 add_subdirectory(src)
+add_subdirectory(test)
+
+enable_testing ()
+add_test (NAME Test
+        COMMAND test)
