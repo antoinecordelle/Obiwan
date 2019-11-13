@@ -73,7 +73,7 @@ cmake ..
 make
 ```
 
-If you encounter any issue while installing, I am at your disposal to find the solution.
+If you encounter any issue while installing, I am at your disposal to find a solution.
 
 ## Run
 
@@ -130,7 +130,7 @@ making all the data processing parts really modular.
 
 #### Application :
 - Launches the different modules of the program
-- Responsible of gathering the parsed data
+- Responsible for gathering the parsed data
 - Distributes this data to the Processors (AlertHandler and StatProcessor)
 - Sends the resulting metrics/alerts to the dashboard
 
@@ -140,7 +140,7 @@ making all the data processing parts really modular.
 
 #### Processors
 ###### StatProcessor 
-- Computes metrics for every window of 10 seconds (default value)
+- Computes Metrics for every window of 10 seconds (default value)
 - Returns Metrics (aggregated data over those windows) to the Application class, that transmits them to the Dashboard
 
 ###### AlertHandler 
@@ -222,21 +222,4 @@ a live monitoring system instead of only being able to analyse the logs afterwar
 
 **Show the evolution of the metrics :** Being able to monitor the evolution of the metrics, with graphs showing the evolution of the traffic,
 of the resource load and the status can be valuable insights.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
