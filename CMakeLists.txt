@@ -7,6 +7,7 @@ project(Obiwan)
 
 add_subdirectory(src)
 add_subdirectory(test)
+add_subdirectory(doc)
 
 enable_testing ()
 add_test (NAME Test
