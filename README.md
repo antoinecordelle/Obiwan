@@ -3,6 +3,8 @@
 Obiwan is a console program written in C++ to parse and deliver alerting and statistics on a csv http log file, as part
 of a project proposed by Datadog.
 
+The program will process alerts and metrics as it streams the log file, displaying them in the dashboard.
+
 ![preview](https://github.com/antoinecordelle/Obiwan/blob/master/Obiwan.png)
 
 # Table of contents
@@ -14,8 +16,7 @@ of a project proposed by Datadog.
   * [Documentation](#documentation)
   * [Dependencies](#dependencies)
 * [Architecture](#architecture)
-  * [Overview](#overview)
-  * [Structure](#structure)
+  * [Global Architecture](#overview)
   * [File Structure](#file-structure)
 * [Possible improvements](#possible-improvements)
 
@@ -119,11 +120,45 @@ This program uses : <br>
 
 # Architecture
 
-## Overview
+The program will process alerts and metrics as it streams the log file, displaying them in the dashboard when they come up.
+The log file is read once, line by line, every line being processed by the Processors as it is parsed. This allow the program
+to parse bigger files, as HttpPackets are only stored for two minutes.
 
-### Global architecture
+## Global architecture
 
-### Lib choices
+The project is based around three main parts, everything being articulated by the center class Application. <br>
+
+The different Processors (AlertHandler and StatProcessor) are independent and have the same input functions (used by Application).
+That way, all the data processing parts are really modular.
+
+#### Application :
+- Launch the different modules of the program
+- Responsible of gathering the parsed data
+- Distribute this data to the Processors (AlertHandler and StatProcessor)
+- Send the resulting metrics/alerts to the dashboard
+
+#### Parser 
+- Parses every line of the csv file
+- Returns HttpPackets to the application that distributes those packets to the Processors
+
+#### Processors
+###### StatProcessor 
+- Computes metrics for every window of 10 seconds (default value)
+- Returns Metrics (aggregated data over those windows) to the Application class, that transmits them to the Dashboard
+
+###### AlertHandler 
+- Gets HttpPackets which are enqueued in a queue that holds 2 minutes of history. Older Packets are removed.
+- Triggers alerts if the traffic logged is too high in the past 2 minutes (default value). 
+- Triggers a recovery message if the traffic is going under this threshold after an alert was triggered.
+- Returns Alerts to the Application that are sent to the Application class, that transmiss them to the Dashboard
+
+#### Dashboard 
+- Displays data sent by the Application : 
+    * Metrics list : list of metrics over several pages
+    * Metric details : details of the selected metrics (resources hit, status statistics, total hit count)
+    * Alerts list
+
+## Lib choices
 
 **Curses** is the console interface library used for most of the console programs used in Unix systems like htop or vim. 
 To build a console interface, using ncurses was the logical choice and a quite interesting C library to use.
@@ -132,10 +167,6 @@ To build a console interface, using ncurses was the logical choice and a quite i
 
 **Doxygen** allows to generate a complete documentation from a templated header commenting. 
 Therefore, most of the comments are located in the headers, allowing more readable source files.
-
-## Structure
-
-
 
 ## File structure
 ```
@@ -165,10 +196,25 @@ Therefore, most of the comments are located in the headers, allowing more readab
 
 ### Processing improvements :
 
+**Other metrics and alerts to add :** Some interesting metrics can be added, such as resources that trigger the most status errors, 
+statistics on errors, on packages sizes. Other alerts can be added as well, for instance regarding 500 or 404 errors.
+
+**Resiliency to badly formatted files :** Csv that are not in the awaited format will result in a crash, adding alerts on this
+and resiliency if some lines are not conventional can be interesting.
+
+**Unit testing :** Currently, only the AlertLogic and the Metrics Processing are partly tested by GoogleTest. On the long run, a more systematic unit testing would be a good investment, allowing the project to be more maintainable.
+
+**Export solution :** Adding the possibility to export the analysis could be a valuable feature.
+
+**Allow live streaming of logs :** Being able to live stream requests/logs that are hitting the server could be the base of 
+a live monitoring system instead of only being able to analyse the logs afterwards.
 
 ### Dashboard specific improvements :
 
+**Better responsivity :** The dashboard's responsivity is not ideal, especially when setting the console size to a way smaller window.
 
+**Show the evolution of the metrics :** Being able to monitor the evolution of the metrics, with graphs showing the evolution of the traffic,
+of the resource load and the status can be valuable insights.
 
 
 
