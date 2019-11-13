@@ -6,10 +6,14 @@
 #include <ncurses.h>
 #include <sstream>
 #include <map>
+#include <memory>
 #include "../Parser/parser.hpp"
 
 
 class Utility {
+public:
+    using WindowPtr = std::unique_ptr<WINDOW, int(*)(WINDOW*)>;
+
 public:
     static std::string              removeChar(std::string& str, char charToRemove);
 
@@ -24,7 +28,7 @@ public:
     template <class Key, class Value>
     static std::pair<Key, Value>    findMaxValue(const std::map<Key, Value> &map);
 
-    static WINDOW*                  initializationBaseWindow(int height, int width, int startY, int startX, const std::string &text, bool center = false, bool withBox = true, bool title = false);
+    static WindowPtr                initializationBaseWindow(int height, int width, int startY, int startX, const std::string &text, bool center = false, bool withBox = true, bool title = false);
 
     static std::string              formatTime(const time_t *time, bool includeDate = true);
 };

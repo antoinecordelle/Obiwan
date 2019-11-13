@@ -20,11 +20,6 @@ Dashboard::Dashboard(const Arguments &arguments)
 }
 
 void Dashboard::run() {
-    WINDOW* header;
-    WINDOW* footer;
-    WINDOW* metricList;
-    WINDOW* metricDetail;
-    WINDOW* alertDisplay;
 
     initscr();
     curs_set(0);
@@ -38,11 +33,11 @@ void Dashboard::run() {
     string headerText = "Logs from " + mFileName +". Metrics every " + to_string(mStatFrame) + " second.";
     string metricListText = "Metrics list p." + to_string(mCurrentPage + 1) + "/" + to_string(mPageCount) +
                              ": (next page : n, previous : p)";
-    header = Utility::initializationBaseWindow(1, COLS, 0, 0, headerText, true, false, true);
-    footer = Utility::initializationBaseWindow(1, COLS, LINES - 1, 0, "Press F1 to leave. Press the up and down arrows to navigate through metrics", false, false, false);
-    metricList = Utility::initializationBaseWindow(3*LINES/5 - 1, 3*COLS/4, 1, 0, metricListText, false, false, false);
-    metricDetail = Utility::initializationBaseWindow(3*LINES/5 - 1, COLS/4, 1, 3*COLS/4 + 1, "Metric details :", false, true, true);
-    alertDisplay = Utility::initializationBaseWindow(2*LINES/5, COLS, 3*LINES/5, 0, "Alerts (metrics from last " + to_string(mAlertFrame) + "s) : ", false, true, true);
+    WindowPtr header = Utility::initializationBaseWindow(1, COLS, 0, 0, headerText, true, false, true);
+    WindowPtr footer = Utility::initializationBaseWindow(1, COLS, LINES - 1, 0, "Press F1 to leave. Press the up and down arrows to navigate through metrics", false, false, false);
+    WindowPtr metricList = Utility::initializationBaseWindow(3*LINES/5 - 1, 3*COLS/4, 1, 0, metricListText, false, false, false);
+    WindowPtr metricDetail = Utility::initializationBaseWindow(3*LINES/5 - 1, COLS/4, 1, 3*COLS/4 + 1, "Metric details :", false, true, true);
+    WindowPtr alertDisplay = Utility::initializationBaseWindow(2*LINES/5, COLS, 3*LINES/5, 0, "Alerts (metrics from last " + to_string(mAlertFrame) + "s) : ", false, true, true);
     timeout(1000);
     while(isRunning()) {
         handleInput();
@@ -56,20 +51,14 @@ void Dashboard::run() {
             displayAlerts(alertDisplay);
         }
     }
-
-    delwin(header);
-    delwin(footer);
-    delwin(metricList);
-    delwin(metricDetail);
-    delwin(alertDisplay);
     endwin();
     mIsRunning = false;
 }
 
-void Dashboard::displayMetrics(WINDOW* metricList) {
+void Dashboard::displayMetrics(WindowPtr &metricList) {
     std::lock_guard<std::mutex> lock(mAlertLock);
     mPageCount = mMetricsCount/mPageSize + 1;
-    wclear(metricList);
+    wclear(metricList.get());
     string metricListText = "Metrics list p." + to_string(mCurrentPage + 1) + "/" + to_string(mPageCount) +
                             ": (next: left arrow, previous: right)";
     metricList = Utility::initializationBaseWindow(3*LINES/5 - 1, 3*COLS/4, 1, 0, metricListText, false, false, false);
@@ -78,10 +67,10 @@ void Dashboard::displayMetrics(WINDOW* metricList) {
         displayOneMetric(metricList, i);
     }
 
-    wrefresh(metricList);
+    wrefresh(metricList.get());
 }
 
-void Dashboard::displayOneMetric(WINDOW* metricList, unsigned int position) {
+void Dashboard::displayOneMetric(WindowPtr &metricList, unsigned int position) {
     unsigned int metricIndex(position + mPageSize*mCurrentPage);
     if (metricIndex < mMetrics.size()) {
         int startingPos = 2;
@@ -99,53 +88,53 @@ void Dashboard::displayOneMetric(WINDOW* metricList, unsigned int position) {
         }
         else {
             text += "  " + to_string(metric.getCounter()) + " hits";
-            mvwprintw(metricList, position + 1, 35,  ("  |  " + mostHitResource.first + " hit " + to_string(mostHitResource.second) + " times").c_str());
+            mvwprintw(metricList.get(), position + 1, 35,  ("  |  " + mostHitResource.first + " hit " + to_string(mostHitResource.second) + " times").c_str());
         }
-        mvwprintw(metricList, position + 1, startingPos, text.c_str());
+        mvwprintw(metricList.get(), position + 1, startingPos, text.c_str());
     }
 }
 
-void Dashboard::displayDetails(WINDOW* metricDetail) {
+void Dashboard::displayDetails(WindowPtr &metricDetail) {
     std::lock_guard<std::mutex> lock(mMetricLock);
-    wclear(metricDetail);
+    wclear(metricDetail.get());
     metricDetail = Utility::initializationBaseWindow(3*LINES/5 - 1, COLS/4, 1, 3*COLS/4 + 1, "Metric details :", false, true, true);
     Metric& metric = mMetrics[mFocusedMetricIndex];
     time_t metricTime = metric.getStartTime();
     int position(1);
-    mvwprintw(metricDetail, position++, 1, ("Time : " + Utility::formatTime(&metricTime, false)).c_str());
+    mvwprintw(metricDetail.get(), position++, 1, ("Time : " + Utility::formatTime(&metricTime, false)).c_str());
     if(metric.getCounter() != 0) {
-        mvwprintw(metricDetail, position++, 1, ("Hits : " + to_string(metric.getCounter())).c_str());
-        position = displayMap(metricDetail, position, "Status", metric.getResponseStatus());
-        displayMap(metricDetail, position, "Resources", metric.getResourceHits());
+        mvwprintw(metricDetail.get(), position++, 1, ("Hits : " + to_string(metric.getCounter())).c_str());
+        position = displayMap(metricDetail.get(), position, "Status", metric.getResponseStatus());
+        displayMap(metricDetail.get(), position, "Resources", metric.getResourceHits());
     }
     else {
         position++;
-        mvwprintw(metricDetail, position++, 1, "No hit occurred");
-        mvwprintw(metricDetail, position, 1, "during this frame");
+        mvwprintw(metricDetail.get(), position++, 1, "No hit occurred");
+        mvwprintw(metricDetail.get(), position, 1, "during this frame");
     }
-    wrefresh(metricDetail);
+    wrefresh(metricDetail.get());
 }
 
-void Dashboard::displayAlerts(WINDOW* alertDisplay) {
+void Dashboard::displayAlerts(WindowPtr &alertDisplay) {
     std::lock_guard<std::mutex> lock(mAlertLock);
-    wclear(alertDisplay);
+    wclear(alertDisplay.get());
     alertDisplay = Utility::initializationBaseWindow(2*LINES/5, COLS, 3*LINES/5, 0, "Alerts (metrics from last " + to_string(mAlertFrame) + "s) : ", false, true, true);
     int position(0);
     for(unsigned int i = mAlerts.size() - 1; i != max(-1, (int)mAlerts.size() - 2*LINES/5 + 1); i--) {
         displayOneAlert(alertDisplay, mAlerts[i], position++);
     }
-    wrefresh(alertDisplay);
+    wrefresh(alertDisplay.get());
 }
 
-void Dashboard::displayOneAlert(WINDOW* alertDisplay, const Alert &alert, int position) {
+void Dashboard::displayOneAlert(WindowPtr &alertDisplay, const Alert &alert, int position) {
     time_t alertTime(alert.triggerTime);
 
-    mvwprintw(alertDisplay, position + 1, 1, Utility::formatTime(&alertTime).c_str());
+    mvwprintw(alertDisplay.get(), position + 1, 1, Utility::formatTime(&alertTime).c_str());
     if(alert.isPositive) {
-        mvwprintw(alertDisplay, position + 1, 20, (" :  High traffic generated : " + to_string(alert.hitCount) + " hits").c_str());
+        mvwprintw(alertDisplay.get(), position + 1, 20, (" :  High traffic generated : " + to_string(alert.hitCount) + " hits").c_str());
     }
     else {
-        mvwprintw(alertDisplay, position + 1, 20, " :  Recovered from alert");
+        mvwprintw(alertDisplay.get(), position + 1, 20, " :  Recovered from alert");
     }
 }
 

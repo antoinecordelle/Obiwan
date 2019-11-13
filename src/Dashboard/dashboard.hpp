@@ -6,6 +6,7 @@
 #include <mutex>
 #include <atomic>
 #include <ncurses.h>
+#include <memory>
 #include "../Metric/metric.hpp"
 #include "../AlertHandler/alertHandler.hpp"
 #include "../ArgsParser/argsParser.hpp"
@@ -13,6 +14,7 @@
 class Dashboard {
 public:
     using MetricVectorIte = std::vector<Metric>::iterator;
+    using WindowPtr = std::unique_ptr<WINDOW, int(*)(WINDOW*)>;
 
 public:
     explicit Dashboard(const Arguments &arguments);
@@ -27,11 +29,11 @@ public:
     void addAlert(Alert alert);
 
 private:
-    void displayMetrics(WINDOW *metricList);
-    void displayOneMetric(WINDOW *metricList, unsigned int position);
-    void displayDetails(WINDOW *metricDetail);
-    void displayAlerts(WINDOW *alertDisplay);
-    void displayOneAlert(WINDOW* alertDisplay, const Alert &alert, int position);
+    void displayMetrics(WindowPtr &metricList);
+    void displayOneMetric(WindowPtr &metricList, unsigned int position);
+    void displayDetails(WindowPtr  &metricDetail);
+    void displayAlerts(WindowPtr &alertDisplay);
+    void displayOneAlert(WindowPtr &alertDisplay, const Alert &alert, int position);
 
     void handleInput();
     void changeFocusedMetric(bool next);
