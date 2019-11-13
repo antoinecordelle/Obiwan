@@ -43,38 +43,9 @@ void Dashboard::run() {
     metricList = Utility::initializationBaseWindow(3*LINES/5 - 1, 3*COLS/4, 1, 0, metricListText, false, false, false);
     metricDetail = Utility::initializationBaseWindow(3*LINES/5 - 1, COLS/4, 1, 3*COLS/4 + 1, "Metric details :", false, true, true);
     alertDisplay = Utility::initializationBaseWindow(2*LINES/5, COLS, 3*LINES/5, 0, "Alerts (metrics from last " + to_string(mAlertFrame) + "s) : ", false, true, true);
-    int input;
     timeout(1000);
     while(isRunning()) {
-        input = getch();
-        switch(input) {
-            case KEY_F(1):
-                // Exits the program if F1 is pressed
-                mIsRunning = false;
-                break;
-            case KEY_UP:
-                // Update the focused metric if Up is pressed
-                shouldRefreshMetrics = true;
-                changeFocusedMetric(false);
-                break;
-            case KEY_DOWN:
-                // Update the focused metric if Down is pressed
-                shouldRefreshMetrics = true;
-                changeFocusedMetric(true);
-                break;
-            case KEY_RIGHT:
-                // Update the next metric page if N is pressed
-                shouldRefreshMetrics = true;
-                navigatePages(false);
-                break;
-            case KEY_LEFT:
-                // Update to the previous metric page if P is pressed
-                shouldRefreshMetrics = true;
-                navigatePages(true);
-                break;
-            default:
-                break;
-        }
+        handleInput();
         if(shouldRefreshMetrics) {
             shouldRefreshMetrics = false;
             displayMetrics(metricList);
@@ -205,6 +176,40 @@ bool Dashboard::isRunning() {
 void Dashboard::setRunning() {
     mIsRunning = true;
 }
+
+void Dashboard::handleInput()
+{
+    int input = getch();
+    switch(input) {
+        case KEY_F(1):
+            // Exits the program if F1 is pressed
+            mIsRunning = false;
+            break;
+        case KEY_UP:
+            // Update the focused metric if Up is pressed
+            shouldRefreshMetrics = true;
+            changeFocusedMetric(false);
+            break;
+        case KEY_DOWN:
+            // Update the focused metric if Down is pressed
+            shouldRefreshMetrics = true;
+            changeFocusedMetric(true);
+            break;
+        case KEY_RIGHT:
+            // Update the next metric page if N is pressed
+            shouldRefreshMetrics = true;
+            navigatePages(false);
+            break;
+        case KEY_LEFT:
+            // Update to the previous metric page if P is pressed
+            shouldRefreshMetrics = true;
+            navigatePages(true);
+            break;
+        default:
+            break;
+    }
+}
+
 
 void Dashboard::changeFocusedMetric(bool next) {
     if(next) {

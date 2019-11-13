@@ -3,20 +3,17 @@
 #include "../Error/logErrorException.hpp"
 #include <string>
 #include <sstream>
-#include <list>
 
 using namespace std;
 
 Parser::Parser(const std::string& filePath)
-:mFile(filePath)
-{
-    if (mFile.is_open()) {
-        string headers;
-        // Remove first line : header with column names
-        getline(mFile, headers);
-    }
-    else
+:mFile(filePath) {
+    if (!mFile.is_open())
         throw invalid_argument("Unable to open file");
+
+    string headers;
+    // Remove first line : header with column names
+    getline(mFile, headers);
 }
 
 Parser::~Parser() {

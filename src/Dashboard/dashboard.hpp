@@ -33,6 +33,7 @@ private:
     void displayAlerts(WINDOW *alertDisplay);
     void displayOneAlert(WINDOW* alertDisplay, const Alert &alert, int position);
 
+    void handleInput();
     void changeFocusedMetric(bool next);
     void navigatePages(bool next);
 
