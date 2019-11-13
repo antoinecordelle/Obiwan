@@ -16,14 +16,15 @@ The program will process alerts and metrics as it streams the log file, displayi
   * [Documentation](#documentation)
   * [Dependencies](#dependencies)
 * [Architecture](#architecture)
-  * [Global Architecture](#overview)
+  * [Global Architecture](#global-architecture)
   * [File Structure](#file-structure)
+  * [Efficiency](#efficiency)
 * [Possible improvements](#possible-improvements)
 
 
 # Setup
 
-## Requirements :
+## Requirements
 
 The program requires :
 - **C++17**
@@ -119,9 +120,6 @@ This program uses : <br>
 # Architecture
 
 The program will process alerts and metrics as it streams the log file, displaying them in the dashboard when they come up.
-The log file is read once, line by line, every line being processed by the Processors as it is parsed. This allow the program
-to parse bigger files, as the file is not stored in the program memory and the program only keeps two minutes (by default) 
-of HttpPacket history.
 
 ## Global architecture
 
@@ -190,6 +188,16 @@ Therefore, most of the comments are located in the headers, allowing more readab
 │   └─ test.cpp   
 └─ CMakeLists.txt           
 ```
+
+## Efficiency
+
+The log file is read once, line by line, every line being processed by the Processors as it is parsed. This allow the program
+to parse bigger files, as the file is not stored in the program memory and the program only keeps two minutes (by default) 
+of HttpPacket history. <br>
+The metrics and alerts are currently being displayed when they are delivered by the corresponding processing units,
+and the Dashboard's thread being separated, it allows to navigate through metrics even when the file is still being processed.
+Therefore, the program should be able to parse quite big files, the only downside is that the view is updated for every chunk of 
+metrics computed, that could mean a lot of dashboard updates if we have a long time range and a few hits per window.
 
 # Possible Improvements
 
