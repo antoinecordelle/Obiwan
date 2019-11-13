@@ -26,9 +26,7 @@ The program will process alerts and metrics as it streams the log file, displayi
 ## Requirements :
 
 The program requires :
-
- At least **C++17**
-
+- **C++17**
 - **CMake** to manage the build proces
 - **Ncurses** to manage the user interface (Dashboard) 
 - **Google Test** 
@@ -122,20 +120,21 @@ This program uses : <br>
 
 The program will process alerts and metrics as it streams the log file, displaying them in the dashboard when they come up.
 The log file is read once, line by line, every line being processed by the Processors as it is parsed. This allow the program
-to parse bigger files, as HttpPackets are only stored for two minutes.
+to parse bigger files, as the file is not stored in the program memory and the program only keeps two minutes (by default) 
+of HttpPacket history.
 
 ## Global architecture
 
 The project is based around three main parts, everything being articulated by the center class Application. <br>
 
-The different Processors (AlertHandler and StatProcessor) are independent and have the same input functions (used by Application).
-That way, all the data processing parts are really modular.
+The different Processors (AlertHandler and StatProcessor) are independent and have the same input function names (used by Application),
+making all the data processing parts really modular.
 
 #### Application :
-- Launch the different modules of the program
+- Launches the different modules of the program
 - Responsible of gathering the parsed data
-- Distribute this data to the Processors (AlertHandler and StatProcessor)
-- Send the resulting metrics/alerts to the dashboard
+- Distributes this data to the Processors (AlertHandler and StatProcessor)
+- Sends the resulting metrics/alerts to the dashboard
 
 #### Parser 
 - Parses every line of the csv file
@@ -199,10 +198,10 @@ Therefore, most of the comments are located in the headers, allowing more readab
 **Other metrics and alerts to add :** Some interesting metrics can be added, such as resources that trigger the most status errors, 
 statistics on errors, on packages sizes. Other alerts can be added as well, for instance regarding 500 or 404 errors.
 
-**Resiliency to badly formatted files :** Csv that are not in the awaited format will result in a crash, adding alerts on this
+**Resiliency to badly formatted files :** Csv that are not in the awaited format will result in a crash, adding errors on this
 and resiliency if some lines are not conventional can be interesting.
 
-**Unit testing :** Currently, only the AlertLogic and the Metrics Processing are partly tested by GoogleTest. On the long run, a more systematic unit testing would be a good investment, allowing the project to be more maintainable.
+**Unit testing :** Currently, only the AlertLogic and the Metrics Processing are tested by GoogleTest. On the long run, a more systematic unit testing would be a good investment, allowing the project to be more maintainable.
 
 **Export solution :** Adding the possibility to export the analysis could be a valuable feature.
 
