@@ -14,7 +14,7 @@
 /// Class managing the parser, the data processors (AlertHandler and StatProcessor)
 /// and interface launch, and the link between the three parts
 /**
- * @brief Runs the dashboard, the parser and processors (AlertHandler and StatProcessor), linking the three parts
+ * @brief Runs the Dashboard, the Parser and processors (AlertHandler and StatProcessor), linking the three parts
  */
 class Application
 {
@@ -29,8 +29,8 @@ private:
     /// Launches the thread where the dashboard is running. Launched Dashboard::run
     void launchDashboardThread();
 
-    /// Launches the processing of the whole log file. Parses every line and sends it to the statProcessor (metric)
-    /// and alertHandler (alerting)
+    /// Launches the processing of the whole log file. Parses every line and sends it to the StatProcessor (metric)
+    /// and AlertHandler (alerting)
     /**
      * @param initPacket : first packet used to initialize the parsing. The bool part of the tuple is used to know if
      * this was the last line of the file
@@ -41,11 +41,11 @@ private:
     /// dashboard. Called by processLogFile
     void processStats(const HttpPacket &packet);
 
-    /// Sends the last parsed line to be processed by the alertHandler. If an alert is generated, it will be sent to the
+    /// Sends the last parsed line to be processed by the AlertHandler. If an alert is generated, it will be sent to the
     /// dashboard. Called by processLogFile
     void processAlerts(const HttpPacket& packet);
 
-    /// Sends the last metric of the file to the dashboard
+    /// Sends the last metric of the file to the Dashboard
     void processLastMetric();
 
 private:

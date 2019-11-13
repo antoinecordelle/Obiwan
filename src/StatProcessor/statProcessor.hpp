@@ -29,7 +29,7 @@ public:
      */
     bool                processLine(const HttpPacket &httpPacket);
 
-    /// Sends the most recents metrics
+    /// Sends the most recent metrics
     /**
      * @brief Sends the currentMetrics and creates a new one with the newest packet (which is in a new timeWindow).
      * Will fill the vector with empty metrics if necessary

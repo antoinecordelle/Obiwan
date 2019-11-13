@@ -17,7 +17,7 @@ struct Alert {
 
 /// Class managing the alerting system
 /**
- * @brief It will be sent packets from the application, will add the packet to its queue and determine if an alert should be sent
+ * @brief It will be sent HttpPacket from the application, will add the packet to its queue and determine if an alert should be sent
  * and will trigger one if so.
  */
 class AlertHandler {
