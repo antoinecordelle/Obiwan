@@ -5,13 +5,13 @@ of a project proposed by Datadog.
 
 The program will process alerts and metrics as it streams the log file, displaying them in the dashboard.
 
-![preview](https://github.com/antoinecordelle/Obiwan/blob/master/Obiwan.png)
+![preview](https://github.com/antoinecordelle/Obiwan/blob/master/screenshot.png)
 
 # Table of contents
 
 * [Setup](#Setup)
   * [Requirements](#Requirements)
-  * [Installation](#install)
+  * [Installation](#installation)
   * [Run](#run)
   * [Documentation](#documentation)
   * [Dependencies](#dependencies)
@@ -35,9 +35,9 @@ The program requires :
 
 The program has been tested on both Linux and MacOS. It will not work with Windows as Ncurses is a Unix type library, that Windows does not support. If that does raise any issue, I am at your disposal to find a solution.
 
-## Installation :
+## Installation
 
-### Libs installation  :
+### Libs installation 
 
 **Libs for Linux**
 ```
