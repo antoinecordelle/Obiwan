@@ -31,7 +31,7 @@ void Dashboard::run() {
 
     string headerText = "Logs from " + mFileName +". Metrics every " + to_string(mStatFrame) + " second.";
     string metricListText = "Metrics list p." + to_string(mCurrentPage + 1) + "/" + to_string(mPageCount) +
-                             ": (next page : n, previous : p)";
+                             ": (previous: left arrow, next: right)";
     WindowPtr header = Utility::initializationBaseWindow(1, COLS, 0, 0, headerText, true, false, true);
     WindowPtr footer = Utility::initializationBaseWindow(1, COLS, LINES - 1, 0, "Press F1 to leave. Press the up and down arrows to navigate through metrics", false, false, false);
     WindowPtr metricList = Utility::initializationBaseWindow(3*LINES/5 - 1, 3*COLS/4, 1, 0, metricListText, false, false, false);
@@ -59,9 +59,9 @@ void Dashboard::displayMetrics(WindowPtr &metricList) {
     mPageCount = mMetricsCount/mPageSize + 1;
     wclear(metricList.get());
     string metricListText = "Metrics list p." + to_string(mCurrentPage + 1) + "/" + to_string(mPageCount) +
-                            ": (next: left arrow, previous: right)";
+                            ": (previous: left arrow, next: right)";
     metricList = Utility::initializationBaseWindow(3*LINES/5 - 1, 3*COLS/4, 1, 0, metricListText, false, false, false);
-    
+
     for (unsigned int i(0); i < mPageSize; i++) {
         displayOneMetric(metricList, i);
     }
@@ -87,7 +87,7 @@ void Dashboard::displayOneMetric(WindowPtr &metricList, unsigned int position) {
         }
         else {
             text += "  " + to_string(metric.getCounter()) + " hits";
-            mvwprintw(metricList.get(), position + 1, 35,  ("  |  " + mostHitResource.first + " hit " + to_string(mostHitResource.second) + " times").c_str());
+            mvwprintw(metricList.get(), position + 1, 35,  ("|  " + mostHitResource.first + " hit " + to_string(mostHitResource.second) + " times").c_str());
         }
         mvwprintw(metricList.get(), position + 1, startingPos, text.c_str());
     }

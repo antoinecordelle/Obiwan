@@ -22,6 +22,12 @@ public:
     ~Parser();
 
 public:
+    /// Parses one line of the csv file mFile and returns the packet and a boolean indicating if the file is over
+    /**
+     * @return tuple<HttpPacket, bool> :
+     * HttpPacket : log line parsed
+     * bool : true if the file is over, which will trigger the end of the processing loop in Application. Else false
+     */
     std::tuple<HttpPacket, bool>  parseOneLine();
 
 private:
